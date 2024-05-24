@@ -76,7 +76,7 @@ export default {
                 });
 
                 // Setelah mendapatkan data kondisi, ambil data jalan
-                console.log(kondisiData)
+                console.log(kondisiData);
                 this.fetchJalanData();
             } catch (error) {
                 console.error('Gagal mengambil data kondisi jalan:', error);
@@ -127,8 +127,21 @@ export default {
                     }
 
                     // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                    L.polyline(JSON.parse(decompressedPolyline), { color }).addTo(this.map)
-                        .bindPopup(`Nama Ruas: ${jalan.nama_ruas}<br>Kondisi: ${kondisi}`);
+                    const polyline = L.polyline(JSON.parse(decompressedPolyline), { color }).addTo(this.map);
+
+                    // Tambahkan event listener untuk menampilkan popup dengan detail jalan
+                    polyline.on('click', () => {
+                        polyline.bindPopup(`
+                            <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
+                            <strong>Kondisi:</strong> ${kondisi}<br>
+                            <strong>Lebar:</strong> ${jalan.lebar}<br>
+                            <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
+                            <strong>Eksisting ID:</strong> ${jalan.eksisting_id}<br>
+                            <strong>Jenis Jalan ID:</strong> ${jalan.jenisjalan_id}<br>
+                            <strong>Keterangan:</strong> ${jalan.keterangan}<br>
+                            <strong>Panjang:</strong> ${jalan.panjang}
+                        `).openPopup();
+                    });
                 } catch (error) {
                     console.error('Error parsing coordinate data:', error);
                 }
