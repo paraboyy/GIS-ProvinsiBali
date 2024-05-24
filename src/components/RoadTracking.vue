@@ -43,12 +43,16 @@ export default {
         return {
             map: null,
             jalanData: [],
-            kondisiData: {}
+            kondisiData: {},
+            eksistingData: {},
+            jenisJalanData: {}
         };
     },
     mounted() {
         this.initializeMap();
         this.fetchKondisiData();
+        this.fetchEksistingData();
+        this.fetchJenisJalanData();
     },
     methods: {
         initializeMap() {
@@ -71,15 +75,52 @@ export default {
                 const kondisiData = response.data.eksisting;
 
                 // Konversi array kondisi jalan menjadi objek untuk akses cepat
-                kondisiData.forEach(eksisting => {
-                    this.kondisiData[eksisting.id] = eksisting.kondisi;
+                kondisiData.forEach(item => {
+                    this.kondisiData[item.id] = item.kondisi;
                 });
 
                 // Setelah mendapatkan data kondisi, ambil data jalan
-                console.log(kondisiData);
                 this.fetchJalanData();
             } catch (error) {
                 console.error('Gagal mengambil data kondisi jalan:', error);
+            }
+        },
+        async fetchEksistingData() {
+            try {
+                // Panggil API untuk mendapatkan data eksisting
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/meksisting', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const eksistingData = response.data.eksisting;
+
+                // Konversi array eksisting menjadi objek untuk akses cepat
+                eksistingData.forEach(item => {
+                    this.eksistingData[item.id] = item.eksisting;
+                });
+            } catch (error) {
+                console.error('Gagal mengambil data eksisting:', error);
+            }
+        },
+        async fetchJenisJalanData() {
+            try {
+                // Panggil API untuk mendapatkan data jenis jalan
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mjenisjalan', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const jenisJalanData = response.data.eksisting;
+
+                // Konversi array jenis jalan menjadi objek untuk akses cepat
+                jenisJalanData.forEach(item => {
+                    this.jenisJalanData[item.id] = item.jenisjalan;
+                });
+            } catch (error) {
+                console.error('Gagal mengambil data jenis jalan:', error);
             }
         },
         async fetchJalanData() {
@@ -119,9 +160,9 @@ export default {
                     const kondisi = this.kondisiData[jalan.kondisi_id];
                     let color = 'blue'; // Default color
                     if (kondisi === 'Rusak') {
-                        color = 'darkred';
-                    } else if (kondisi === 'Sedang') {
                         color = 'red';
+                    } else if (kondisi === 'Sedang') {
+                        color = 'darkred';
                     } else if (kondisi === 'Baik') {
                         color = 'green';
                     }
@@ -131,13 +172,16 @@ export default {
 
                     // Tambahkan event listener untuk menampilkan popup dengan detail jalan
                     polyline.on('click', () => {
+                        const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
+                        const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
+
                         polyline.bindPopup(`
                             <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
                             <strong>Kondisi:</strong> ${kondisi}<br>
                             <strong>Lebar:</strong> ${jalan.lebar}<br>
                             <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
-                            <strong>Eksisting ID:</strong> ${jalan.eksisting_id}<br>
-                            <strong>Jenis Jalan ID:</strong> ${jalan.jenisjalan_id}<br>
+                            <strong>Eksisting:</strong> ${eksisting}<br>
+                            <strong>Jenis Jalan:</strong> ${jenisJalan}<br>
                             <strong>Keterangan:</strong> ${jalan.keterangan}<br>
                             <strong>Panjang:</strong> ${jalan.panjang}
                         `).openPopup();
