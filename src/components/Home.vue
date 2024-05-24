@@ -35,11 +35,19 @@
         <div class="leaflet-top leaflet-right mt-7">
             <div class="leaflet-control bg-light leaflet-bar p-2">
                 <div class="form-group">
+                    <label for="mapType">Tipe Peta:</label>
+                    <select id="mapType" class="form-select" v-model="selectedMapType" @change="changeMapType">
+                        <option value="street">Jalan</option>
+                        <option value="satellite">Satelit</option>
+                        <option value="terrain">Pemandangan</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="province">Provinsi:</label>
                     <select id="province" class="form-select" v-model="selectedProvince" @change="onProvinceChange">
                         <option value="" disabled selected>Pilih Provinsi</option>
                         <option v-for="province in provinces" :key="province.id" :value="province.id">{{
-                        province.provinsi }}</option>
+                            province.provinsi }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kabupatens.length > 0">
@@ -47,7 +55,7 @@
                     <select id="kabupaten" class="form-select" v-model="selectedKabupaten" @change="onKabupatenChange">
                         <option value="" disabled selected>Pilih Kabupaten</option>
                         <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">{{
-                        kabupaten.value }}</option>
+                            kabupaten.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kecamatans.length > 0">
@@ -55,7 +63,7 @@
                     <select id="kecamatan" class="form-select" v-model="selectedKecamatan" @change="onKecamatanChange">
                         <option value="" disabled selected>Pilih Kecamatan</option>
                         <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">{{
-                        kecamatan.value }}</option>
+                            kecamatan.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="desas.length > 0">
@@ -86,10 +94,12 @@ export default {
             selectedKabupaten: null,
             selectedKecamatan: null,
             selectedDesa: null,
+            selectedMapType: 'street',
             desaCoordinates: {
-                "Jimbaran": [-8.790987, 115.139915],
-                "Benoa": [-8.787573, 115.215521],
-                "Cupel": [-8.3654449, 114.5512443],
+                "Jimbaran": [-8.790987, 115.139915], "Benoa": [-8.787573, 115.215521], "Cupel": [-8.3654449, 114.5512443],
+                "Ubung": [-8.630591, 115.1964555], "Sanur": [-8.6947883, 115.2492267], "Kesiman": [-8.6599448, 115.2487942],
+                "Tista": [-8.5426194, 115.0702486],
+                "Babakan": [-8.3909595, 115.1284769],
                 // Tambahkan koordinat desa lainnya di sini
             }
         };
@@ -194,6 +204,34 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
+            }
+        },
+        async changeMapType() {
+            // Hapus layer peta yang ada
+            this.map.removeLayer(this.tileLayer);
+
+            // Tambahkan kembali layer peta sesuai dengan tipe peta yang dipilih
+            switch (this.selectedMapType) {
+                case 'street':
+                    this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    }).addTo(this.map);
+                    break;
+                case 'satellite':
+                    this.tileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+                        maxZoom: 19,
+                        attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                    }).addTo(this.map);
+                    break;
+                case 'terrain':
+                    this.tileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 17,
+                        attribution: '&copy; <a href="http://opentopomap.org/about">OpenTopoMap</a> contributors'
+                    }).addTo(this.map);
+                    break;
+                default:
+                    break;
             }
         },
         decompressCoordinate(compressedCoordinate) {
