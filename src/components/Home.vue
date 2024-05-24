@@ -14,10 +14,10 @@
                 <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Ruas Jalan</a>
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/dataruasjalan">Tambah Ruas Jalan</a>
+                            <a class="nav-link" href="/create">Tambah Ruas Jalan</a>
                         </li>
                     </ul>
                 </div>
@@ -27,17 +27,16 @@
             </div>
         </nav>
 
-        <div class="card shadow mx-2">
-            <div class="card-body" style="height: 800px;">
-                <div id="map" ref="map" style="height: 100%;"></div>
-            </div>
+        <div class="card-body" style="height: 780px;">
+            <div id="map" ref="map" style="height: 100%;"></div>
         </div>
     </div>
 </template>
 
 <script>
 import L from 'leaflet';
-import sha256 from 'crypto-js/sha256';
+import axios from 'axios';
+import pako from 'pako';
 
 export default {
     mounted() {
@@ -51,48 +50,49 @@ export default {
         }).addTo(this.map);
 
         // Panggil API untuk mendapatkan polyline
-        this.fetchPolyline();
+        this.fetchJalanData();
     },
     methods: {
-        fetchPolyline() {            
-            fetch('https://gisapis.manpits.xyz/api/ruasjalan', {
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token') 
-                }
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
+        async fetchJalanData() {
+            try {
+                // Panggil API untuk mendapatkan data jalan
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/ruasjalan', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    if (data && data.ruasjalan) {
-                        data.ruasjalan.forEach(ruas => {
-                            const decryptedPolyline = this.decryptPolyline(ruas.paths);
-                            this.drawPolyline(decryptedPolyline);
-                        });
-                    } else {
-                        throw new Error('Ruas jalan data is empty or undefined');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching polyline:', error);
                 });
-            
+                const jalanData = response.data.ruasjalan;
+
+                // Pastikan data yang diterima adalah array
+                if (Array.isArray(jalanData)) {
+                    // Loop melalui data jalan
+                    jalanData.forEach(jalan => {
+                        try {
+                            // Dekompresi koordinat sebelum menambahkan polyline ke peta
+                            const decompressedPolyline = this.decompressCoordinate(jalan.paths);
+
+                            // Gambar polyline berdasarkan koordinat yang sudah didekompresi
+                            L.polyline(JSON.parse(decompressedPolyline), { color: 'red' }).addTo(this.map);
+                        } catch (error) {
+                            console.error('Error parsing coordinate data:', error);
+                        }
+                    });
+                } else {
+                    console.error('Invalid data format:', jalanData);
+                }
+            } catch (error) {
+                console.error(error);
+            }
         },
-        decryptPolyline(polyline) {            
-            const decryptedPolyline = polyline.map(coord => {
-                const decryptedCoord = sha256(coord).toString();
-                return JSON.parse(decryptedCoord);
-            });
-            return decryptedPolyline;
-            
-        },
-        drawPolyline(polyline) {
-            // Gambar polyline di peta menggunakan Leaflet
-            L.polyline(polyline, { color: 'red' }).addTo(this.map);
+        decompressCoordinate(compressedCoordinate) {
+            // Konversi base64 string kembali ke Uint8Array
+            const compressed = Uint8Array.from(atob(compressedCoordinate), c => c.charCodeAt(0));
+
+            // Dekompresi koordinat menggunakan pako
+            const decompressed = pako.inflate(compressed, { to: 'string' });
+
+            return decompressed;
         }
     }
 }
