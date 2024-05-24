@@ -30,6 +30,43 @@
         <div class="card-body" style="height: 780px;">
             <div id="map" ref="map" style="height: 100%;"></div>
         </div>
+
+        <!-- Select boxes -->
+        <div class="leaflet-top leaflet-right mt-7">
+            <div class="leaflet-control bg-light leaflet-bar p-2">
+                <div class="form-group">
+                    <label for="province">Provinsi:</label>
+                    <select id="province" class="form-select" v-model="selectedProvince" @change="onProvinceChange">
+                        <option value="" disabled selected>Pilih Provinsi</option>
+                        <option v-for="province in provinces" :key="province.id" :value="province.id">{{
+                        province.provinsi }}</option>
+                    </select>
+                </div>
+                <div class="form-group" v-if="kabupatens.length > 0">
+                    <label for="kabupaten">Kabupaten:</label>
+                    <select id="kabupaten" class="form-select" v-model="selectedKabupaten" @change="onKabupatenChange">
+                        <option value="" disabled selected>Pilih Kabupaten</option>
+                        <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">{{
+                        kabupaten.value }}</option>
+                    </select>
+                </div>
+                <div class="form-group" v-if="kecamatans.length > 0">
+                    <label for="kecamatan">Kecamatan:</label>
+                    <select id="kecamatan" class="form-select" v-model="selectedKecamatan" @change="onKecamatanChange">
+                        <option value="" disabled selected>Pilih Kecamatan</option>
+                        <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">{{
+                        kecamatan.value }}</option>
+                    </select>
+                </div>
+                <div class="form-group" v-if="desas.length > 0">
+                    <label for="desa">Desa:</label>
+                    <select id="desa" class="form-select" v-model="selectedDesa" @change="onDesaChange">
+                        <option value="" disabled selected>Pilih Desa</option>
+                        <option v-for="desa in desas" :key="desa.id" :value="desa.id">{{ desa.value }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -39,20 +76,94 @@ import axios from 'axios';
 import pako from 'pako';
 
 export default {
+    data() {
+        return {
+            provinces: [],
+            kabupatens: [],
+            kecamatans: [],
+            desas: [],
+            selectedProvince: null,
+            selectedKabupaten: null,
+            selectedKecamatan: null,
+            selectedDesa: null,
+            desaCoordinates: {
+                "Jimbaran": [-8.790987, 115.139915],
+                "Benoa": [-8.787573, 115.215521],
+                "Cupel": [-8.3654449, 114.5512443],
+                // Tambahkan koordinat desa lainnya di sini
+            }
+        };
+    },
     mounted() {
         // Inisialisasi peta Leaflet
         this.map = L.map('map').setView([-8.6832467, 115.2095182], 11);
 
         // Menambahkan layer peta OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this.map);
 
         // Panggil API untuk mendapatkan polyline
         this.fetchJalanData();
+        this.fetchProvinces();
     },
     methods: {
+        async fetchProvinces() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.provinces = response.data.provinsi;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchKabupaten() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kabupaten/${this.selectedProvince}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.kabupatens = response.data.kabupaten;
+                this.kecamatans = [];
+                this.desas = [];
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchKecamatan() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatan/${this.selectedKabupaten}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.kecamatans = response.data.kecamatan;
+                this.desas = [];
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchDesa() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/desa/${this.selectedKecamatan}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.desas = response.data.desa;
+            } catch (error) {
+                console.error(error);
+            }
+        },
         async fetchJalanData() {
             try {
                 // Panggil API untuk mendapatkan data jalan
@@ -93,11 +204,32 @@ export default {
             const decompressed = pako.inflate(compressed, { to: 'string' });
 
             return decompressed;
+        },
+        onProvinceChange() {
+            this.fetchKabupaten();
+            this.selectedKabupaten = null;
+            this.selectedKecamatan = null;
+            this.selectedDesa = null;
+        },
+        onKabupatenChange() {
+            this.fetchKecamatan();
+            this.selectedKecamatan = null;
+            this.selectedDesa = null;
+        },
+        onKecamatanChange() {
+            this.fetchDesa();
+            this.selectedDesa = null;
+        },
+        onDesaChange() {
+            this.setMapViewForDesa();
+        },
+        setMapViewForDesa() {
+            const desa = this.desas.find(d => d.id === this.selectedDesa);
+            if (desa && this.desaCoordinates[desa.value]) {
+                const [lat, lng] = this.desaCoordinates[desa.value];
+                this.map.setView([lat, lng], 14);
+            }
         }
     }
 }
 </script>
-
-<style>
-/* Tambahkan gaya khusus di sini jika diperlukan */
-</style>

@@ -66,3 +66,7 @@
     width: 100vw;
     position: relative;
 }
+
+.mt-7 {
+    margin-top: 5%;
+}

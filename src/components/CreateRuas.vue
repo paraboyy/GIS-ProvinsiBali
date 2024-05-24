@@ -27,7 +27,7 @@
             </div>
         </nav>
 
-        <div class="d-flex">
+        <div class="d-flex background p-2">
             <div class="card shadow mx-2" style="width: 100%;">
                 <div class="card-body">
                     <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
@@ -172,7 +172,7 @@ export default {
 
     mounted() {
         // Inisialisasi peta Leaflet
-        this.map = L.map('map').setView([-8.6832467, 115.2095182], 11);
+        this.map = L.map('map').setView([-8.4253951, 115.1832866], 10);
 
         // Menambahkan layer peta OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
