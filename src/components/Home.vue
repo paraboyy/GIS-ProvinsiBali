@@ -19,6 +19,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/create">Tambah Ruas Jalan</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/road">Detail Jalan</a>
+                        </li>
                     </ul>
                 </div>
                 <a href="/" class="d-flex align-items-center">

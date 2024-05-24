@@ -19,6 +19,9 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Tambah Ruas Jalan</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/road">Detail Jalan</a>
+                        </li>
                     </ul>
                 </div>
                 <a href="/" class="d-flex align-items-center">
@@ -162,9 +165,10 @@ export default {
             selectedKabupaten: null,
             selectedKecamatan: null,
             desaCoordinates: {
-                "Jimbaran": [-8.790987, 115.139915],
-                "Benoa": [-8.787573, 115.215521],
-                "Cupel": [-8.3654449, 114.5512443],
+                "Jimbaran": [-8.7882083, 115.1525732], "Benoa": [-8.787573, 115.215521], "Cupel": [-8.3654449, 114.5512443],
+                "Ubung": [-8.630591, 115.1964555], "Sanur": [-8.6947883, 115.2492267], "Kesiman": [-8.6599448, 115.2487942],
+                "Tista": [-8.5426194, 115.0702486], "Babakan": [-8.3909595, 115.1284769], "Pecatu": [-8.8193125, 115.1096054],
+                "Ungasan": [-8.8238493, 115.155516],
                 // Tambahkan koordinat desa 
             }
         }
@@ -175,9 +179,9 @@ export default {
         this.map = L.map('map').setView([-8.4253951, 115.1832866], 10);
 
         // Menambahkan layer peta OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        this.tileLayer = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
         }).addTo(this.map);
 
         // Menangani event klik pada peta untuk menggambar polyline
@@ -306,6 +310,7 @@ export default {
                 });
                 console.log(response.data);
                 alert('Jalan berhasil ditambahkan');
+                window.location.reload();            
             } catch (error) {
                 console.error(error);
                 alert('Gagal menambahkan jalan');
