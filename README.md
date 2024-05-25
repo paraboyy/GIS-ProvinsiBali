@@ -27,11 +27,35 @@ npm run dev
 ```sh
 npm run build
 ```
-
-##Tampilan Website
+<br>
+## Tampilan Website
 
 ### Home sebelum login
 
 <p align="center">
-    <img src="/src/assets/img/tampilan/Home.png" width = "350px" height = "200px">
+    <img src="/src/assets/img/tampilan/Home.png" width = width = "450px" height = "300px">
+</p>
+
+### Login Page
+
+<p align="center">
+    <img src="/src/assets/img/tampilan/LoginPage.png" width = "450px" height = "300px">
+</p>
+
+### Register Page
+
+<p align="center">
+    <img src="/src/assets/img/tampilan/RegisterPage.png" width = "450px" height = "300px">
+</p>
+
+### Create Ruas Jalan
+
+<p align="center">
+    <img src="/src/assets/img/tampilan/CreateRuas.png" width = "450px" height = "300px">
+</p>
+
+### Detail Ruas Jalan
+
+<p align="center">
+    <img src="/src/assets/img/tampilan/DetailRuas.png" width = "450px" height = "300px">
 </p>
