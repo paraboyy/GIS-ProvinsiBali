@@ -27,3 +27,11 @@ npm run dev
 ```sh
 npm run build
 ```
+
+##Tampilan Website
+
+### Home sebelum login
+
+<p align="center">
+    <img src="/src/assets/img/tampilan/Home.png" width = "350px" height = "200px">
+</p>
