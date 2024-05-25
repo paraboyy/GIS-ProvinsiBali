@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div v-if="isWaiting">
+            <WaitingPage />
+        </div>
         <div id="map" ref="map" style="height: 100vh; width: 100vw; position: relative;">
             <div class="map-overlay top-right glass-effect">
                 <button class="btn btn-secondary m-2" @click="showLoginModal">Login</button>
@@ -14,7 +17,7 @@
         <!-- Login Modal -->
         <div v-if="isLoginModalVisible" class="modal-overlay">
             <div class="glass-effect p-3 w-25">
-                <span class="close" @click="closeLoginModal">&times;</span>
+                <span class="close text-danger fs-3" @click="closeLoginModal">&times;</span>
                 <h5 class="text-white text-center">Login</h5>
                 <form @submit.prevent="handleLogin">
                     <div class="mb-3">
@@ -35,7 +38,7 @@
         <!-- Register Modal -->
         <div v-if="isRegisterModalVisible" class="modal-overlay">
             <div class="glass-effect p-3 w-25">
-                <span class="close" @click="closeRegisterModal">&times;</span>
+                <span class="close text-danger fs-3" @click="closeRegisterModal">&times;</span>
                 <h5 class="text-white text-center">Register</h5>
                 <form @submit.prevent="handleRegister">
                     <div class="mb-3">
@@ -61,8 +64,12 @@
 
 <script>
 import L from 'leaflet';
+import WaitingPage from './WaitingPage.vue';
 
 export default {
+    components: {
+        WaitingPage
+    },
     data() {
         return {
             isLoginModalVisible: false,
@@ -112,7 +119,11 @@ export default {
                     const data = await response.json();
                     if (response.ok) {
                         localStorage.setItem('token', data.meta.token);
-                        this.$router.push('/homelogin');
+                        this.isWaiting = true;
+                        setTimeout(() => {
+                            this.$router.push('/homelogin');
+                            this.isWaiting = false;
+                        }, 1000);
                         this.closeLoginModal();
                     } else {
                         alert(data.message || 'Login failed');

@@ -36,7 +36,7 @@
                     <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <div class="card shadow mx-2">
                     <div class="card-body">
                         <form @submit.prevent="tambahJalan">
@@ -168,7 +168,9 @@ export default {
                 "Jimbaran": [-8.7882083, 115.1525732], "Benoa": [-8.787573, 115.215521], "Cupel": [-8.3654449, 114.5512443],
                 "Ubung": [-8.630591, 115.1964555], "Sanur": [-8.6947883, 115.2492267], "Kesiman": [-8.6599448, 115.2487942],
                 "Tista": [-8.5426194, 115.0702486], "Babakan": [-8.3909595, 115.1284769], "Pecatu": [-8.8193125, 115.1096054],
-                "Ungasan": [-8.8238493, 115.155516],
+                "Ungasan": [-8.8238493, 115.155516], "Legian": [-8.703179, 115.170034], "Seminyak": [-8.6884617, 115.1607311],
+                "Kedonganan": [-8.7601338, 115.1734532],
+                "Tuban": [-8.7418107, 115.1747874],
                 // Tambahkan koordinat desa 
             }
         }
@@ -242,7 +244,7 @@ export default {
 
             if (selectedDesaName in this.desaCoordinates) {
                 const coords = this.desaCoordinates[selectedDesaName];
-                this.map.setView(coords, 15); // Atur zoom level sesuai kebutuhan
+                this.map.setView(coords, 16); // Atur zoom level sesuai kebutuhan
             } else {
                 console.error('Koordinat untuk desa ini tidak tersedia.');
             }
@@ -376,8 +378,8 @@ export default {
                     }
                 });
                 this.provinces = response.data.provinsi;
-                this.kabupatens = response.data.kabupaten;
-                this.kecamatans = response.data.kecamatan;
+                // this.kabupatens = response.data.kabupaten;
+                // this.kecamatans = response.data.kecamatan;
             } catch (error) {
                 console.error(error);
             }

@@ -50,7 +50,7 @@
                     <select id="province" class="form-select" v-model="selectedProvince" @change="onProvinceChange">
                         <option value="" disabled selected>Pilih Provinsi</option>
                         <option v-for="province in provinces" :key="province.id" :value="province.id">{{
-                            province.provinsi }}</option>
+                        province.provinsi }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kabupatens.length > 0">
@@ -58,7 +58,7 @@
                     <select id="kabupaten" class="form-select" v-model="selectedKabupaten" @change="onKabupatenChange">
                         <option value="" disabled selected>Pilih Kabupaten</option>
                         <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">{{
-                            kabupaten.value }}</option>
+                        kabupaten.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kecamatans.length > 0">
@@ -66,7 +66,7 @@
                     <select id="kecamatan" class="form-select" v-model="selectedKecamatan" @change="onKecamatanChange">
                         <option value="" disabled selected>Pilih Kecamatan</option>
                         <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">{{
-                            kecamatan.value }}</option>
+                        kecamatan.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="desas.length > 0">
@@ -98,9 +98,16 @@ export default {
             selectedKecamatan: null,
             selectedDesa: null,
             selectedMapType: 'street',
+            kondisiData: {},
+            eksistingData: {},
+            jenisJalanData: {},
             desaCoordinates: {
-                "Jimbaran": [-8.790987, 115.139915], "Benoa": [-8.787573, 115.215521], "Cupel": [-8.3654449, 114.5512443],
-                "Ubung": [-8.630591, 115.1964555], "Sanur": [-8.6947883, 115.2492267], "Kesiman": [-8.6599448, 115.2487942],
+                "Jimbaran": [-8.790987, 115.139915],
+                "Benoa": [-8.787573, 115.215521],
+                "Cupel": [-8.3654449, 114.5512443],
+                "Ubung": [-8.630591, 115.1964555],
+                "Sanur": [-8.6947883, 115.2492267],
+                "Kesiman": [-8.6599448, 115.2487942],
                 "Tista": [-8.5426194, 115.0702486],
                 "Babakan": [-8.3909595, 115.1284769],
                 // Tambahkan koordinat desa lainnya di sini
@@ -109,7 +116,7 @@ export default {
     },
     mounted() {
         // Inisialisasi peta Leaflet
-        this.map = L.map('map').setView([-8.6832467, 115.2095182], 11);
+        this.map = L.map(this.$refs.map).setView([-8.6832467, 115.2095182], 11);
 
         // Menambahkan layer peta OpenStreetMap
         this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -120,6 +127,9 @@ export default {
         // Panggil API untuk mendapatkan polyline
         this.fetchJalanData();
         this.fetchProvinces();
+        this.fetchKondisiData();
+        this.fetchEksistingData();
+        this.fetchJenisJalanData();
     },
     methods: {
         async fetchProvinces() {
@@ -177,6 +187,66 @@ export default {
                 console.error(error);
             }
         },
+        async fetchKondisiData() {
+            try {
+                // Panggil API untuk mendapatkan data kondisi jalan
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mkondisi', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const kondisiData = response.data.eksisting;
+
+                // Konversi array kondisi jalan menjadi objek untuk akses cepat
+                kondisiData.forEach(item => {
+                    this.kondisiData[item.id] = item.kondisi;
+                });
+
+                // Setelah mendapatkan data kondisi, ambil data jalan
+                this.fetchJalanData();
+            } catch (error) {
+                console.error('Gagal mengambil data kondisi jalan:', error);
+            }
+        },
+        async fetchEksistingData() {
+            try {
+                // Panggil API untuk mendapatkan data eksisting
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/meksisting', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const eksistingData = response.data.eksisting;
+
+                // Konversi array eksisting menjadi objek untuk akses cepat
+                eksistingData.forEach(item => {
+                    this.eksistingData[item.id] = item.eksisting;
+                });
+            } catch (error) {
+                console.error('Gagal mengambil data eksisting:', error);
+            }
+        },
+        async fetchJenisJalanData() {
+            try {
+                // Panggil API untuk mendapatkan data jenis jalan
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mjenisjalan', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const jenisJalanData = response.data.eksisting;
+
+                // Konversi array jenis jalan menjadi objek untuk akses cepat
+                jenisJalanData.forEach(item => {
+                    this.jenisJalanData[item.id] = item.jenisjalan;
+                });
+            } catch (error) {
+                console.error('Gagal mengambil data jenis jalan:', error);
+            }
+        },
         async fetchJalanData() {
             try {
                 // Panggil API untuk mendapatkan data jalan
@@ -197,7 +267,24 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            L.polyline(JSON.parse(decompressedPolyline), { color: 'red' }).addTo(this.map);
+                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'red' }).addTo(this.map);
+                            polyline.on('click', () => {
+                                const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
+                                const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
+                                const kondisi = this.kondisiData[jalan.kondisi_id] || 'Unknown';
+
+                                polyline.bindPopup(`
+                                    <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
+                                    <strong>Kondisi:</strong> ${this.kondisiData[jalan.kondisi_id] || 'Unknown'}<br>
+                                    <strong>Lebar:</strong> ${jalan.lebar}<br>
+                                    <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
+                                    <strong>Eksisting:</strong> ${eksisting}<br>
+                                    <strong>Jenis Jalan:</strong> ${jenisJalan}<br>
+                                    <strong>Kondisi Jalan:</strong> ${kondisi}<br>
+                                    <strong>Keterangan:</strong> ${jalan.keterangan}<br>
+                                    <strong>Panjang:</strong> ${jalan.panjang}
+                                `).openPopup();
+                            });
                         } catch (error) {
                             console.error('Error parsing coordinate data:', error);
                         }

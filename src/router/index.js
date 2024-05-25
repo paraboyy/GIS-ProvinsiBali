@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../components/Home.vue'
 import HomeNologin from '../components/HomeNoLogin.vue'
-import UjiHash from '../components/ujihas.vue'
+import UjiHash from '../components/WaitingPage.vue'
 import CreateRuas from '../components/CreateRuas.vue'
 import RoadTrack from '../components/RoadTracking.vue'
 
