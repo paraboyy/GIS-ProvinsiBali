@@ -123,7 +123,7 @@ export default {
                         setTimeout(() => {
                             this.$router.push('/homelogin');
                             this.isWaiting = false;
-                        }, 1000);
+                        }, 2000);
                         this.closeLoginModal();
                     } else {
                         alert(data.message || 'Login failed');

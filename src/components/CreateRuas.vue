@@ -32,6 +32,7 @@
 
         <div class="d-flex background p-2">
             <div class="card shadow mx-2" style="width: 100%;">
+                <button @click="undoLastPoint" class="btn btn-secondary mt-2 w-25 mx-2">Undo Last Point</button>
                 <div class="card-body">
                     <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
                 </div>
@@ -121,6 +122,7 @@
                             </div>
                             <button type="submit" class="btn btn-primary mt-4">Tambah Jalan</button>
                         </form>
+                        <!-- <button @click="undoLastPoint" class="btn btn-secondary mt-2">Undo Last Point</button> -->
                     </div>
                 </div>
             </div>
@@ -312,7 +314,19 @@ export default {
                 });
                 console.log(response.data);
                 alert('Jalan berhasil ditambahkan');
-                window.location.reload();            
+
+                this.fetchJalanData();
+                this.jalanForm.nama_ruas = '';
+                this.jalanForm.lebar = '';
+                this.jalanForm.kode_ruas = '';
+                this.jalanForm.keterangan = '';
+                this.selectedEksisting = null;
+                this.selectedKondisi = null;
+                this.selectedJenisJalan = null;
+                this.polylineCoords = [];
+                if (this.polyline) {
+                    this.map.removeLayer(this.polyline);
+                }
             } catch (error) {
                 console.error(error);
                 alert('Gagal menambahkan jalan');
@@ -434,6 +448,26 @@ export default {
         },
         onKecamatanChange() {
             this.fetchDesa();
+        },
+        undoLastPoint() {
+            // Hapus titik terakhir dari polylineCoords
+            this.polylineCoords.pop();
+
+            // Hapus polyline yang ada jika ada
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
+
+            // Gambar polyline baru jika masih ada koordinat
+            if (this.polylineCoords.length > 0) {
+                this.polyline = L.polyline(this.polylineCoords, { color: 'red' }).addTo(this.map);
+            }
+
+            // Hitung ulang panjang polyline
+            this.jalanForm.panjang = this.calculatePolylineLength(this.polylineCoords);
+
+            // Konversi polyline menjadi string
+            this.polylineString = JSON.stringify(this.polylineCoords);
         }
     }
 }
