@@ -37,6 +37,9 @@
 import L from 'leaflet';
 import axios from 'axios';
 import pako from 'pako';
+import mitt from 'mitt';
+
+const emitter = mitt();
 
 export default {
     data() {
@@ -53,6 +56,13 @@ export default {
         this.fetchKondisiData();
         this.fetchEksistingData();
         this.fetchJenisJalanData();
+
+        emitter.on('editPolyline', this.editPolyline);
+        emitter.on('deletePolyline', this.deletePolyline);
+    },
+    beforeUnmount() {
+        emitter.off('editPolyline', this.editPolyline);
+        emitter.off('deletePolyline', this.deletePolyline);
     },
     methods: {
         initializeMap() {
@@ -65,7 +75,6 @@ export default {
         },
         async fetchKondisiData() {
             try {
-                // Panggil API untuk mendapatkan data kondisi jalan
                 const token = localStorage.getItem('token');
                 const response = await axios.get('https://gisapis.manpits.xyz/api/mkondisi', {
                     headers: {
@@ -74,12 +83,10 @@ export default {
                 });
                 const kondisiData = response.data.eksisting;
 
-                // Konversi array kondisi jalan menjadi objek untuk akses cepat
                 kondisiData.forEach(item => {
                     this.kondisiData[item.id] = item.kondisi;
                 });
 
-                // Setelah mendapatkan data kondisi, ambil data jalan
                 this.fetchJalanData();
             } catch (error) {
                 console.error('Gagal mengambil data kondisi jalan:', error);
@@ -87,7 +94,6 @@ export default {
         },
         async fetchEksistingData() {
             try {
-                // Panggil API untuk mendapatkan data eksisting
                 const token = localStorage.getItem('token');
                 const response = await axios.get('https://gisapis.manpits.xyz/api/meksisting', {
                     headers: {
@@ -96,7 +102,6 @@ export default {
                 });
                 const eksistingData = response.data.eksisting;
 
-                // Konversi array eksisting menjadi objek untuk akses cepat
                 eksistingData.forEach(item => {
                     this.eksistingData[item.id] = item.eksisting;
                 });
@@ -106,7 +111,6 @@ export default {
         },
         async fetchJenisJalanData() {
             try {
-                // Panggil API untuk mendapatkan data jenis jalan
                 const token = localStorage.getItem('token');
                 const response = await axios.get('https://gisapis.manpits.xyz/api/mjenisjalan', {
                     headers: {
@@ -115,7 +119,6 @@ export default {
                 });
                 const jenisJalanData = response.data.eksisting;
 
-                // Konversi array jenis jalan menjadi objek untuk akses cepat
                 jenisJalanData.forEach(item => {
                     this.jenisJalanData[item.id] = item.jenisjalan;
                 });
@@ -125,7 +128,6 @@ export default {
         },
         async fetchJalanData() {
             try {
-                // Panggil API untuk mendapatkan data jalan
                 const token = localStorage.getItem('token');
                 const response = await axios.get('https://gisapis.manpits.xyz/api/ruasjalan', {
                     headers: {
@@ -134,15 +136,11 @@ export default {
                 });
                 const jalanData = response.data.ruasjalan;
 
-                // Pastikan data yang diterima adalah array
                 if (Array.isArray(jalanData)) {
-                    // Simpan data jalan ke dalam state
                     this.jalanData = jalanData;
-
-                    // Tampilkan data jalan di peta
                     this.displayDataOnMap();
                 } else {
-                    console.error('Invalid data format:', jalanData);
+                    console.error('Format data tidak valid:', jalanData);
                 }
             } catch (error) {
                 console.error('Gagal mengambil data jalan:', error);
@@ -153,12 +151,10 @@ export default {
 
             this.jalanData.forEach(jalan => {
                 try {
-                    // Dekompresi koordinat sebelum menambahkan polyline ke peta
                     const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
-                    // Tentukan warna berdasarkan kondisi jalan
                     const kondisi = this.kondisiData[jalan.kondisi_id];
-                    let color = 'blue'; // Default color
+                    let color = 'blue';
                     if (kondisi === 'Rusak') {
                         color = 'red';
                     } else if (kondisi === 'Sedang') {
@@ -167,15 +163,14 @@ export default {
                         color = 'green';
                     }
 
-                    // Gambar polyline berdasarkan koordinat yang sudah didekompresi
                     const polyline = L.polyline(JSON.parse(decompressedPolyline), { color }).addTo(this.map);
 
-                    // Tambahkan event listener untuk menampilkan popup dengan detail jalan
                     polyline.on('click', () => {
                         const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
                         const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
 
-                        polyline.bindPopup(`
+                        const popupContent = document.createElement('div');
+                        popupContent.innerHTML = `
                             <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
                             <strong>Kondisi:</strong> ${kondisi}<br>
                             <strong>Lebar:</strong> ${jalan.lebar}<br>
@@ -183,8 +178,20 @@ export default {
                             <strong>Eksisting:</strong> ${eksisting}<br>
                             <strong>Jenis Jalan:</strong> ${jenisJalan}<br>
                             <strong>Keterangan:</strong> ${jalan.keterangan}<br>
-                            <strong>Panjang:</strong> ${jalan.panjang}
-                        `).openPopup();
+                            <strong>Panjang:</strong> ${jalan.panjang}<br>
+                            <button id="edit-${jalan.id}">Edit</button>
+                            <button id="delete-${jalan.id}">Delete</button>
+                        `;
+
+                        popupContent.querySelector(`#edit-${jalan.id}`).addEventListener('click', () => {
+                            this.editPolyline(jalan.id);
+                        });
+
+                        popupContent.querySelector(`#delete-${jalan.id}`).addEventListener('click', () => {
+                            this.deletePolyline(jalan.id);
+                        });
+
+                        polyline.bindPopup(popupContent).openPopup();
                     });
                 } catch (error) {
                     console.error('Error parsing coordinate data:', error);
@@ -192,14 +199,31 @@ export default {
             });
         },
         decompressCoordinate(compressedCoordinate) {
-            // Konversi base64 string kembali ke Uint8Array
             const compressed = Uint8Array.from(atob(compressedCoordinate), c => c.charCodeAt(0));
-
-            // Dekompresi koordinat menggunakan pako
             const decompressed = pako.inflate(compressed, { to: 'string' });
-
             return decompressed;
         },
+        async editPolyline(id) {
+            alert(`Edit polyline dengan ID: ${id}`);
+            // Implementasikan logika untuk memperbarui polyline di sini
+        },
+        async deletePolyline(id) {
+            try {
+                console.log(`Menghapus polyline dengan ID: ${id}`);
+                const token = localStorage.getItem('token');
+                const response = await axios.delete(`https://gisapis.manpits.xyz/api/ruasjalan/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                console.log('Response:', response);
+                alert('Polyline berhasil dihapus');
+                this.fetchJalanData();
+            } catch (error) {
+                console.error('Gagal menghapus polyline:', error);
+                alert('Gagal menghapus polyline');
+            }
+        }
     }
 };
 </script>
