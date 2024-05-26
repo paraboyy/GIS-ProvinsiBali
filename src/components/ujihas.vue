@@ -30,6 +30,41 @@
             </div>
         </nav>
         <div id="map" style="height: 100vh; width: 100vw;"></div>
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Ruas Jalan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="editNamaRuas" class="form-label">Nama Ruas</label>
+                                <input type="text" class="form-control" id="editNamaRuas">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editLebarRuas" class="form-label">Lebar Ruas</label>
+                                <input type="number" class="form-control" id="editLebarRuas">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editKodeRuas" class="form-label">Kode Ruas</label>
+                                <input type="text" class="form-control" id="editKodeRuas">
+                            </div>
+                            <div class="mb-3">
+                                <label for="editKeterangan" class="form-label">Keterangan</label>
+                                <input type="text" class="form-control" id="editKeterangan">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button id="btnSimpanEdit" type="button" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -179,8 +214,8 @@ export default {
                             <strong>Jenis Jalan:</strong> ${jenisJalan}<br>
                             <strong>Keterangan:</strong> ${jalan.keterangan}<br>
                             <strong>Panjang:</strong> ${jalan.panjang}<br>
-                            <button id="edit-${jalan.id}">Edit</button>
-                            <button id="delete-${jalan.id}">Delete</button>
+                            <button id="edit-${jalan.id}" class="btn btn-primary">Edit</button>
+                            <button id="delete-${jalan.id}" class="btn btn-danger">Delete</button>
                         `;
 
                         popupContent.querySelector(`#edit-${jalan.id}`).addEventListener('click', () => {
@@ -204,8 +239,60 @@ export default {
             return decompressed;
         },
         async editPolyline(id) {
-            alert(`Edit polyline dengan ID: ${id}`);
-            // Implementasikan logika untuk memperbarui polyline di sini
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/ruasjalan/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const ruasJalan = response.data.ruasjalan;
+                console.log(response.data.ruasJalan);
+
+                this.openEditModal(ruasJalan);
+            } catch (error) {
+                console.error('Gagal mengambil data ruas jalan:', error);
+            }
+        },
+        openEditModal(ruasJalan) {
+            const modal = document.getElementById('editModal');
+            // console.log(ruasJalan);
+
+            modal.querySelector('#editNamaRuas').value = ruasJalan.nama_ruas;
+            modal.querySelector('#editLebarRuas').value = ruasJalan.lebar;
+            modal.querySelector('#editKodeRuas').value = ruasJalan.kode_ruas;
+            modal.querySelector('#editKeterangan').value = ruasJalan.keterangan;
+
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+
+            modal.querySelector('#btnSimpanEdit').addEventListener('click', () => {
+                const editedData = {
+                    nama_ruas: modal.querySelector('#editNamaRuas').value,
+                    lebar: modal.querySelector('#editLebarRuas').value,
+                    kode_ruas: modal.querySelector('#editKodeRuas').value,
+                    keterangan: modal.querySelector('#editKeterangan').value
+                };
+
+                this.updatePolylineData(ruasJalan.id, editedData);
+                bsModal.hide();
+            });
+        },
+        async updatePolylineData(id, newData) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.put(`https://gisapis.manpits.xyz/api/ruasjalan/${id}`, newData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                console.log('Data ruas jalan berhasil diperbarui:', response.data);
+                alert('Data ruas jalan berhasil diperbarui');
+                this.fetchJalanData();
+            } catch (error) {
+                console.error('Gagal memperbarui data ruas jalan:', error);
+                alert('Gagal memperbarui data ruas jalan');
+            }
         },
         async deletePolyline(id) {
             try {
