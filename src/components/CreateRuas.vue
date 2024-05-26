@@ -178,6 +178,22 @@ export default {
                 "Lokasari": [-8.5099149, 115.4192988], "Kesiman": [-8.6599448, 115.2487942], "Kesiman Pentilan": [-8.6599448, 115.2487942],
                 "Dangin Puri Kelod": [-8.6599448, 115.2491014],
                 // Tambahkan koordinat desa 
+            }, kecematanCoordinates: {
+                "MENGWI": [-8.5607121, 115.1446241], "KUTA UTARA": [-8.6454091, 115.159901], "ABIANSEMAL": [-8.5272669, 115.2151078],
+                "PETANG": [-8.3500797, 115.2252437], "KUTA": [-8.7242124, 115.1815534], "KUTA SELATAN": [-8.7806564, 115.1886018],
+                "DENPASAR SELATAN": [-8.6888763, 115.2231738], "DENPASAR UTARA": [-8.623538, 115.2057948], "DENPASAR TIMUR": [-8.6304535, 115.2471368],
+                "DENPASAR BARAT": [-8.6590235, 115.1898615], "KERAMBITAN": [-8.5230725, 115.0846588], "PENEBEL": [-8.4278098, 115.1467919],
+                "SELEMADEG": [-8.4908353, 115.0491421], "BATURITI": [-8.3401193, 115.1504053], "KEDIRI": [-8.571807, 115.1188969],
+                "PUPUAN": [-8.3541709, 114.9957841], "MARGA": [-8.4429303, 115.1794938], "NEGARA": [-8.298738, 114.5979531],
+                "JEMBRANA": [-8.3012707, 114.6673136], "MENDOYO": [-8.2996525, 114.7390452], "PEKUTATAN": [-8.3873785, 114.8566339],
+                "MELAYA": [-8.2274723, 114.5344651], "GEROKAK": [-8.1882967, 114.7639236], "SUKASADA": [-8.2088404, 115.0909638],
+                "TEJAKULA": [-8.1317751, 115.3248397], "SERIRIT": [-8.249942, 114.8922708], "BULELENG": [-8.129198, 115.0836545],
+                "BUSUNG BIU": [-8.3012064, 114.9320468], "SAWAN": [-8.151514, 115.1642467], "KUBUTAMBAHAN": [-8.1574336, 115.21734],
+                "TAMPAKSIRING": [-8.45527, 115.307778],
+                "UBUD": [-8.5123037, 115.2512905],
+                "BLAHBATUH": [-8.5653966, 115.3044604],
+                "GIANYAR": [-8.5197936, 115.3269249],
+                "PAYANGAN": [-8.4026552, 115.2332244],
             }
         }
     },
@@ -253,6 +269,13 @@ export default {
                 this.map.setView(coords, 16); // Atur zoom level sesuai kebutuhan
             } else {
                 console.error('Koordinat untuk desa ini tidak tersedia.');
+            }
+        },
+        setMapViewForKecematan() {
+            const kecamatan = this.kecamatans.find(d => d.id === this.selectedKecamatan);
+            if (kecamatan && this.kecematanCoordinates[kecamatan.value]) {
+                const [lat, lng] = this.kecematanCoordinates[kecamatan.value];
+                this.map.setView([lat, lng], 13);
             }
         },
         onDesaChange() {
@@ -452,6 +475,7 @@ export default {
         },
         onKecamatanChange() {
             this.fetchDesa();
+            this.setMapViewForKecematan();
         },
         undoLastPoint() {
             // Hapus titik terakhir dari polylineCoords

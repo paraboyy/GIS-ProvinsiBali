@@ -83,7 +83,7 @@ export default {
     },
     mounted() {
         // Inisialisasi peta Leaflet
-        this.map = L.map(this.$refs.map).setView([-8.6832467, 115.2095182], 11);
+        this.map = L.map(this.$refs.map).setView([-8.4422091, 115.1723953], 10);
 
         // Menambahkan layer peta OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
