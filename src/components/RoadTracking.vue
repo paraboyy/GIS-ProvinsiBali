@@ -30,6 +30,7 @@
             </div>
         </nav>
         <div id="map" style="height: 100vh; width: 100vw;"></div>
+
         <!-- Edit Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -56,6 +57,24 @@
                                 <label for="editKeterangan" class="form-label">Keterangan</label>
                                 <input type="text" class="form-control" id="editKeterangan">
                             </div>
+                            <div class="mb-3">
+                                <label for="editKondisi" class="form-label">Kondisi</label>
+                                <select class="form-control" id="editKondisi">
+                                    <option v-for="(value, key) in kondisiData" :value="key">{{ value }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editEksisting" class="form-label">Eksisting</label>
+                                <select class="form-control" id="editEksisting">
+                                    <option v-for="(value, key) in eksistingData" :value="key">{{ value }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editJenisJalan" class="form-label">Jenis Jalan</label>
+                                <select class="form-control" id="editJenisJalan">
+                                    <option v-for="(value, key) in jenisJalanData" :value="key">{{ value }}</option>
+                                </select>
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -73,6 +92,8 @@ import L from 'leaflet';
 import axios from 'axios';
 import pako from 'pako';
 import mitt from 'mitt';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const emitter = mitt();
 
@@ -103,7 +124,7 @@ export default {
         initializeMap() {
             this.map = L.map('map').setView([-8.4253951, 115.1832866], 10);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(this.map);
@@ -206,7 +227,7 @@ export default {
 
                         const popupContent = document.createElement('div');
                         popupContent.innerHTML = `
-                            <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
+                            <strong class="mb-2">Nama Ruas:</strong> ${jalan.nama_ruas}<br>
                             <strong>Kondisi:</strong> ${kondisi}<br>
                             <strong>Lebar:</strong> ${jalan.lebar}<br>
                             <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
@@ -247,7 +268,6 @@ export default {
                     }
                 });
                 const ruasJalan = response.data.ruasjalan;
-                console.log(response.data.ruasJalan);
 
                 this.openEditModal(ruasJalan);
             } catch (error) {
@@ -256,12 +276,14 @@ export default {
         },
         openEditModal(ruasJalan) {
             const modal = document.getElementById('editModal');
-            // console.log(ruasJalan);
 
             modal.querySelector('#editNamaRuas').value = ruasJalan.nama_ruas;
             modal.querySelector('#editLebarRuas').value = ruasJalan.lebar;
             modal.querySelector('#editKodeRuas').value = ruasJalan.kode_ruas;
             modal.querySelector('#editKeterangan').value = ruasJalan.keterangan;
+            modal.querySelector('#editKondisi').value = ruasJalan.kondisi_id;
+            modal.querySelector('#editEksisting').value = ruasJalan.eksisting_id;
+            modal.querySelector('#editJenisJalan').value = ruasJalan.jenisjalan_id;
 
             const bsModal = new bootstrap.Modal(modal);
             bsModal.show();
@@ -271,7 +293,10 @@ export default {
                     nama_ruas: modal.querySelector('#editNamaRuas').value,
                     lebar: modal.querySelector('#editLebarRuas').value,
                     kode_ruas: modal.querySelector('#editKodeRuas').value,
-                    keterangan: modal.querySelector('#editKeterangan').value
+                    keterangan: modal.querySelector('#editKeterangan').value,
+                    kondisi_id: modal.querySelector('#editKondisi').value,
+                    eksisting_id: modal.querySelector('#editEksisting').value,
+                    jenisjalan_id: modal.querySelector('#editJenisJalan').value
                 };
 
                 this.updatePolylineData(ruasJalan.id, editedData);
