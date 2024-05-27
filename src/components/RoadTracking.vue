@@ -31,6 +31,12 @@
         </nav>
         <div id="map" style="height: 100vh; width: 100vw;"></div>
 
+        <!-- Search Button -->
+        <div class=" bg-light p-2 radius leaflet-bar" style="position: absolute; top: 10%; right: 2%; z-index: 1000;">
+            <input type="text" class="form-control me-2" placeholder="Cari nama ruas" v-model="searchQuery">
+            <button class="btn btn-outline-success mt-2" @click="searchByName">Cari</button>
+        </div>
+
         <!-- Edit Modal -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -334,6 +340,18 @@ export default {
             } catch (error) {
                 console.error('Gagal menghapus polyline:', error);
                 alert('Gagal menghapus polyline');
+            }
+        },
+        searchByName() {
+            const searchQuery = this.searchQuery.toLowerCase().trim();
+            const matchedPolylines = this.jalanData.filter(jalan => jalan.nama_ruas.toLowerCase().includes(searchQuery));
+            if (matchedPolylines.length > 0) {
+                // Zoom to the first matched polyline
+                const firstMatch = matchedPolylines[0];
+                const coordinates = JSON.parse(this.decompressCoordinate(firstMatch.paths));
+                this.map.flyToBounds(coordinates);
+            } else {
+                alert('Nama ruas tidak ditemukan.');
             }
         }
     }

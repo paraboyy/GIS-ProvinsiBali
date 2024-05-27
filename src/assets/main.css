@@ -16,6 +16,10 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.radius {
+    border-radius: 10px;
+}
+
 .map-overlay {
     position: absolute;
     z-index: 1000;
