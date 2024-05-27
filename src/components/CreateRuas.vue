@@ -32,101 +32,103 @@
 
         <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
             <div class=" card shadow mx-2" style="width: 100%;">
-            <button @click="undoLastPoint" class="btn btn-secondary mt-2 w-25 mx-2">Undo Last Point</button>
-            <div class="card-body">
-                <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card shadow mx-2">
+                <div class="row justify-content-center">
+                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2">Undo Koordinat</button>
+                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2">Delete Koordinat</button>
+                </div>
                 <div class="card-body">
-                    <form @submit.prevent="tambahJalan">
-                        <div class="mb-3">
-                            <label for="province" class="form-label">Pilih Provinsi:</label>
-                            <select id="province" class="form-select" v-model="selectedProvince"
-                                @change="onProvinceChange">
-                                <option v-for="province in provinces" :key="province.id" :value="province.id">
-                                    {{ province.provinsi }}
-                                </option>
-                            </select>
-                        </div>
-                        <div v-if="kabupatens.length" class="mb-3">
-                            <label for="kabupaten" class="form-label">Pilih Kabupaten:</label>
-                            <select id="kabupaten" class="form-select" v-model="selectedKabupaten"
-                                @change="onKabupatenChange">
-                                <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">
-                                    {{ kabupaten.value }}
-                                </option>
-                            </select>
-                        </div>
-                        <div v-if="kecamatans.length" class="mb-3">
-                            <label for="kecamatan" class="form-label">Pilih Kecamatan:</label>
-                            <select id="kecamatan" class="form-select" v-model="selectedKecamatan"
-                                @change="onKecamatanChange">
-                                <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">
-                                    {{ kecamatan.value }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="desa">Nama Desa:</label>
-                            <select id="desa" class="form-select" v-model="selectedDesa" @change="onDesaChange">
-                                <option v-for="desa in desas" :key="desa.id" :value="desa.id">
-                                    {{ desa.value }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="nama_ruas">Nama Ruas:</label>
-                            <input type="text" class="form-control" v-model="jalanForm.nama_ruas" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="lebar">Lebar Ruas:</label>
-                            <input type="text" class="form-control" v-model="jalanForm.lebar" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="kode_ruas">Kode Ruas:</label>
-                            <input type="text" class="form-control" v-model="jalanForm.kode_ruas" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eksisting">Eksisting:</label>
-                            <select id="eksisting" class="form-select" v-model="selectedEksisting"
-                                @change="onEksistingChange">
-                                <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.id">
-                                    {{ eksisting.eksisting }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="kondisi">Kondisi:</label>
-                            <select id="kondisi" class="form-select" v-model="selectedKondisi"
-                                @change="onKondisiChange">
-                                <option v-for="kondisi in kondisis" :key="kondisi.id" :value="kondisi.id">
-                                    {{ kondisi.kondisi }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="jenis_jalan">Jenis Jalan:</label>
-                            <select id="jenis_jalan" class="form-select" v-model="selectedJenisJalan"
-                                @change="onJenisJalanChange">
-                                <option v-for="jenis_jalan in jenisJalans" :key="jenis_jalan.id"
-                                    :value="jenis_jalan.id">
-                                    {{ jenis_jalan.jenisjalan }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan:</label>
-                            <input type="text" class="form-control" v-model="jalanForm.keterangan" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-4">Tambah Jalan</button>
-                    </form>
-                    <!-- <button @click="undoLastPoint" class="btn btn-secondary mt-2">Undo Last Point</button> -->
+                    <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card shadow mx-2">
+                    <div class="card-body">
+                        <form @submit.prevent="tambahJalan">
+                            <div class="mb-3">
+                                <label for="province" class="form-label">Pilih Provinsi:</label>
+                                <select id="province" class="form-select" v-model="selectedProvince"
+                                    @change="onProvinceChange">
+                                    <option v-for="province in provinces" :key="province.id" :value="province.id">
+                                        {{ province.provinsi }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div v-if="kabupatens.length" class="mb-3">
+                                <label for="kabupaten" class="form-label">Pilih Kabupaten:</label>
+                                <select id="kabupaten" class="form-select" v-model="selectedKabupaten"
+                                    @change="onKabupatenChange">
+                                    <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">
+                                        {{ kabupaten.value }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div v-if="kecamatans.length" class="mb-3">
+                                <label for="kecamatan" class="form-label">Pilih Kecamatan:</label>
+                                <select id="kecamatan" class="form-select" v-model="selectedKecamatan"
+                                    @change="onKecamatanChange">
+                                    <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">
+                                        {{ kecamatan.value }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="desa">Nama Desa:</label>
+                                <select id="desa" class="form-select" v-model="selectedDesa" @change="onDesaChange">
+                                    <option v-for="desa in desas" :key="desa.id" :value="desa.id">
+                                        {{ desa.value }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="nama_ruas">Nama Ruas:</label>
+                                <input type="text" class="form-control" v-model="jalanForm.nama_ruas" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lebar">Lebar Ruas:</label>
+                                <input type="text" class="form-control" v-model="jalanForm.lebar" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kode_ruas">Kode Ruas:</label>
+                                <input type="text" class="form-control" v-model="jalanForm.kode_ruas" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="eksisting">Eksisting:</label>
+                                <select id="eksisting" class="form-select" v-model="selectedEksisting"
+                                    @change="onEksistingChange">
+                                    <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.id">
+                                        {{ eksisting.eksisting }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="kondisi">Kondisi:</label>
+                                <select id="kondisi" class="form-select" v-model="selectedKondisi"
+                                    @change="onKondisiChange">
+                                    <option v-for="kondisi in kondisis" :key="kondisi.id" :value="kondisi.id">
+                                        {{ kondisi.kondisi }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="jenis_jalan">Jenis Jalan:</label>
+                                <select id="jenis_jalan" class="form-select" v-model="selectedJenisJalan"
+                                    @change="onJenisJalanChange">
+                                    <option v-for="jenis_jalan in jenisJalans" :key="jenis_jalan.id"
+                                        :value="jenis_jalan.id">
+                                        {{ jenis_jalan.jenisjalan }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="keterangan">Keterangan:</label>
+                                <input type="text" class="form-control" v-model="jalanForm.keterangan" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4">Tambah Jalan</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </template>
 
@@ -379,7 +381,7 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            L.polyline(JSON.parse(decompressedPolyline), { color: 'red' }).addTo(this.map);
+                            L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
                         } catch (error) {
                             console.error('Error parsing coordinate data:', error);
                         }
@@ -496,6 +498,12 @@ export default {
 
             // Konversi polyline menjadi string
             this.polylineString = JSON.stringify(this.polylineCoords);
+        },
+        deleteLastPoint(){
+            this.polylineCoords = [];
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
         }
     }
 }

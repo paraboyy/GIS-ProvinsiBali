@@ -23,10 +23,10 @@
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li>
                     </ul>
+                    <a href="/" class="d-flex align-items-center">
+                        <button class="btn btn-outline-danger m-2">Logout</button>
+                    </a>
                 </div>
-                <a href="/" class="d-flex align-items-center">
-                    <button class="btn btn-danger m-2">Logout</button>
-                </a>
             </div>
         </nav>
 
@@ -50,7 +50,7 @@
                     <select id="province" class="form-select" v-model="selectedProvince" @change="onProvinceChange">
                         <option value="" disabled selected>Pilih Provinsi</option>
                         <option v-for="province in provinces" :key="province.id" :value="province.id">{{
-                        province.provinsi }}</option>
+                            province.provinsi }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kabupatens.length > 0">
@@ -58,7 +58,7 @@
                     <select id="kabupaten" class="form-select" v-model="selectedKabupaten" @change="onKabupatenChange">
                         <option value="" disabled selected>Pilih Kabupaten</option>
                         <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">{{
-                        kabupaten.value }}</option>
+                            kabupaten.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="kecamatans.length > 0">
@@ -66,7 +66,7 @@
                     <select id="kecamatan" class="form-select" v-model="selectedKecamatan" @change="onKecamatanChange">
                         <option value="" disabled selected>Pilih Kecamatan</option>
                         <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">{{
-                        kecamatan.value }}</option>
+                            kecamatan.value }}</option>
                     </select>
                 </div>
                 <div class="form-group" v-if="desas.length > 0">
@@ -286,7 +286,7 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'red' }).addTo(this.map);
+                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
                             polyline.on('click', () => {
                                 const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
                                 const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
