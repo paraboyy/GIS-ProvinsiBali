@@ -52,8 +52,14 @@
                                 <input type="text" class="form-control" id="editNamaRuas">
                             </div>
                             <div class="mb-3">
+                                <label for="editNamaDesa" class="form-label">Nama desa</label>
+                                <select class="form-control" id="editNamaDesa">
+                                    <option v-for="(value, key) in desaData" :value="key">{{ value }}</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="editLebarRuas" class="form-label">Lebar Ruas</label>
-                                <input type="number" class="form-control" id="editLebarRuas">
+                                <input type="text" class="form-control" id="editLebarRuas">
                             </div>
                             <div class="mb-3">
                                 <label for="editKodeRuas" class="form-label">Kode Ruas</label>
@@ -110,7 +116,8 @@ export default {
             jalanData: [],
             kondisiData: {},
             eksistingData: {},
-            jenisJalanData: {}
+            jenisJalanData: {},
+            desaData: {}
         };
     },
     mounted() {
@@ -118,6 +125,7 @@ export default {
         this.fetchKondisiData();
         this.fetchEksistingData();
         this.fetchJenisJalanData();
+        this.fetchDesaData();
 
         emitter.on('editPolyline', this.editPolyline);
         emitter.on('deletePolyline', this.deletePolyline);
@@ -188,6 +196,23 @@ export default {
                 console.error('Gagal mengambil data jenis jalan:', error);
             }
         },
+        async fetchDesaData() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const desaData = response.data.desa;
+
+                desaData.forEach(item => {
+                    this.desaData[item.id] = item.desa;
+                });
+            } catch (error) {
+                console.error('Gagal mengambil data desa', error);
+            }
+        },
         async fetchJalanData() {
             try {
                 const token = localStorage.getItem('token');
@@ -230,10 +255,12 @@ export default {
                     polyline.on('click', () => {
                         const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
                         const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
+                        const desa = this.desaData[jalan.desa_id] || 'Unknown';
 
                         const popupContent = document.createElement('div');
                         popupContent.innerHTML = `
                             <strong class="mb-2">Nama Ruas:</strong> ${jalan.nama_ruas}<br>
+                            <strong class="mb-2">Nama Desa:</strong> ${desa}<br>
                             <strong>Kondisi:</strong> ${kondisi}<br>
                             <strong>Lebar:</strong> ${jalan.lebar}<br>
                             <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
@@ -285,6 +312,7 @@ export default {
 
             modal.querySelector('#editNamaRuas').value = ruasJalan.nama_ruas;
             modal.querySelector('#editLebarRuas').value = ruasJalan.lebar;
+            modal.querySelector('#editNamaDesa').value = ruasJalan.desa_id;
             modal.querySelector('#editKodeRuas').value = ruasJalan.kode_ruas;
             modal.querySelector('#editKeterangan').value = ruasJalan.keterangan;
             modal.querySelector('#editKondisi').value = ruasJalan.kondisi_id;
@@ -298,6 +326,7 @@ export default {
                 const editedData = {
                     nama_ruas: modal.querySelector('#editNamaRuas').value,
                     lebar: modal.querySelector('#editLebarRuas').value,
+                    lebar: modal.querySelector('#editNamaDesa').value,
                     kode_ruas: modal.querySelector('#editKodeRuas').value,
                     keterangan: modal.querySelector('#editKeterangan').value,
                     kondisi_id: modal.querySelector('#editKondisi').value,
@@ -346,7 +375,7 @@ export default {
             const searchQuery = this.searchQuery.toLowerCase().trim();
             const matchedPolylines = this.jalanData.filter(jalan => jalan.nama_ruas.toLowerCase().includes(searchQuery));
             if (matchedPolylines.length > 0) {
-                // Zoom to the first matched polyline
+                // Zoom ke ruas jalan
                 const firstMatch = matchedPolylines[0];
                 const coordinates = JSON.parse(this.decompressCoordinate(firstMatch.paths));
                 this.map.flyToBounds(coordinates);
