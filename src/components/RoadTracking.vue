@@ -22,6 +22,9 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Detail Jalan</a>
                         </li>
+                        <li class="nav-item">
+                            <button class="nav-link" @click="toggleJumlahData">Tampilkan Jumlah Data</button>
+                        </li>
                     </ul>
                 </div>
                 <a href="/" class="d-flex align-items-center">
@@ -29,6 +32,30 @@
                 </a>
             </div>
         </nav>
+
+        <div v-if="showJumlahData" class="mt-2 row" style="justify-content: center;">
+            <!-- Bagian untuk menampilkan jumlah jenis jalan dan kondisi jalan -->
+            <div class="w-25">
+                <h4>Jumlah Jenis Jalan</h4>
+                <ul>
+                    <li>Kabupaten: {{ jumlahJenisJalan.Kabupaten }}</li>
+                    <li>Desa: {{ jumlahJenisJalan.Desa }}</li>
+                    <li>Provinsi: {{ jumlahJenisJalan.Provinsi }}</li>
+                </ul>  
+            </div>
+            <div class="w-25">
+                <h4>Jumlah Kondisi Jalan</h4>
+                <ul>
+                    <li>Rusak: {{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak / jalanData.length *
+                                    100).toFixed(2) }}%)</li>
+                    <li>Bagus: {{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus / jalanData.length *
+                                    100).toFixed(2) }}%)</li>
+                    <li>Sedang: {{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang / jalanData.length *
+                        100).toFixed(2) }}%)</li>
+                </ul>
+            </div>
+        </div>
+
         <div id="map" style="height: 100vh; width: 100vw;"></div>
 
         <!-- Search Button -->
@@ -117,7 +144,10 @@ export default {
             kondisiData: {},
             eksistingData: {},
             jenisJalanData: {},
-            desaData: {}
+            desaData: {},
+            jumlahJenisJalan: {},
+            jumlahKondisiJalan: {},
+            showJumlahData: false
         };
     },
     mounted() {
@@ -225,6 +255,13 @@ export default {
 
                 if (Array.isArray(jalanData)) {
                     this.jalanData = jalanData;
+
+                    // Hitung jumlah jenis jalan
+                    this.jumlahJenisJalan = this.countJenisJalan();
+                    // Hitung jumlah kondisi jalan
+                    this.jumlahKondisiJalan = this.countKondisiJalan();
+
+
                     this.displayDataOnMap();
                 } else {
                     console.error('Format data tidak valid:', jalanData);
@@ -382,6 +419,42 @@ export default {
             } else {
                 alert('Nama ruas tidak ditemukan.');
             }
+        },
+        countJenisJalan() {
+            const jumlahJenisJalan = {
+                Kabupaten: 0,
+                Desa: 0,
+                Provinsi: 0
+            };
+
+            this.jalanData.forEach(jalan => {
+                const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
+                if (jenisJalan === 'Kabupaten') jumlahJenisJalan.Kabupaten++;
+                else if (jenisJalan === 'Desa') jumlahJenisJalan.Desa++;
+                else if (jenisJalan === 'Provinsi') jumlahJenisJalan.Provinsi++;
+            });
+
+            return jumlahJenisJalan;
+        },
+
+        countKondisiJalan() {
+            const jumlahKondisiJalan = {
+                Rusak: 0,
+                Bagus: 0,
+                Sedang: 0
+            };
+
+            this.jalanData.forEach(jalan => {
+                const kondisi = this.kondisiData[jalan.kondisi_id] || 'Unknown';
+                if (kondisi === 'Rusak') jumlahKondisiJalan.Rusak++;
+                else if (kondisi === 'Baik') jumlahKondisiJalan.Bagus++;
+                else if (kondisi === 'Sedang') jumlahKondisiJalan.Sedang++;
+            });
+
+            return jumlahKondisiJalan;
+        },
+        toggleJumlahData() {
+            this.showJumlahData = !this.showJumlahData;
         }
     }
 };
