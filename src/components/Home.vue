@@ -2,16 +2,11 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
-                        class="d-inline-block align-top">
-                    GIS || Provinsi Bali
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
@@ -23,12 +18,18 @@
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li>
                     </ul>
-                    <a href="/" class="d-flex align-items-center">
-                        <button class="btn btn-outline-danger m-2">Logout</button>
-                    </a>
+                    <button class="btn btn-danger m-2"><a href="/"
+                            class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
+                <a class="navbar-brand" href="#">
+                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
+                        class="d-inline-block align-top">
+                    GIS || Provinsi Bali
+                </a>
             </div>
         </nav>
+
+
 
         <div class="card-body" style="height: 780px;">
             <div id="map" ref="map" style="height: 100%;"></div>
@@ -89,6 +90,7 @@ import pako from 'pako';
 export default {
     data() {
         return {
+            isNavbarVisible: false,
             provinces: [],
             kabupatens: [],
             kecamatans: [],
@@ -151,6 +153,9 @@ export default {
         this.fetchJenisJalanData();
     },
     methods: {
+        toggleNavbar() {
+            this.isNavbarVisible = !this.isNavbarVisible;
+        },
         async fetchProvinces() {
             try {
                 const token = localStorage.getItem('token');

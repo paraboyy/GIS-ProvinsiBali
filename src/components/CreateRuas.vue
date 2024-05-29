@@ -2,16 +2,11 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
-                        class="d-inline-block align-top">
-                    GIS || Provinsi Bali
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="/homelogin">Home</a>
@@ -23,9 +18,13 @@
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li>
                     </ul>
+                    <button class="btn btn-danger m-2"><a href="/"
+                            class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
-                <a href="/" class="d-flex align-items-center">
-                    <button class="btn btn-danger m-2">Logout</button>
+                <a class="navbar-brand" href="#">
+                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
+                        class="d-inline-block align-top">
+                    GIS || Provinsi Bali
                 </a>
             </div>
         </nav>

@@ -2,16 +2,11 @@
     <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
-                        class="d-inline-block align-top">
-                    GIS || Provinsi Bali
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="/homelogin">Home</a>
@@ -26,14 +21,17 @@
                             <button class="nav-link" @click="toggleJumlahData">Tampilkan Jumlah Data</button>
                         </li>
                     </ul>
+                    <button class="btn btn-danger m-2"><a href="/" class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
-                <a href="/" class="d-flex align-items-center">
-                    <button class="btn btn-danger m-2">Logout</button>
+                <a class="navbar-brand" href="#">
+                    <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
+                        class="d-inline-block align-top">
+                    GIS || Provinsi Bali
                 </a>
             </div>
         </nav>
 
-        <div v-if="showJumlahData" class="mt-2 row" style="justify-content: center;">
+        <div v-if="showJumlahData" class="mt-2 row mx-3">
             <!-- Bagian untuk menampilkan jumlah jenis jalan dan kondisi jalan -->
             <div class="w-25">
                 <h4>Jumlah Jenis Jalan</h4>
@@ -41,15 +39,15 @@
                     <li>Kabupaten: {{ jumlahJenisJalan.Kabupaten }}</li>
                     <li>Desa: {{ jumlahJenisJalan.Desa }}</li>
                     <li>Provinsi: {{ jumlahJenisJalan.Provinsi }}</li>
-                </ul>  
+                </ul>
             </div>
             <div class="w-25">
                 <h4>Jumlah Kondisi Jalan</h4>
                 <ul>
                     <li>Rusak: {{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak / jalanData.length *
-                                    100).toFixed(2) }}%)</li>
+                        100).toFixed(2) }}%)</li>
                     <li>Bagus: {{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus / jalanData.length *
-                                    100).toFixed(2) }}%)</li>
+                        100).toFixed(2) }}%)</li>
                     <li>Sedang: {{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang / jalanData.length *
                         100).toFixed(2) }}%)</li>
                 </ul>
