@@ -18,10 +18,14 @@
                             <a class="nav-link active" href="#">Detail Jalan</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="/data">Data Jalan</a>
+                        </li>
+                        <li class="nav-item">
                             <button class="nav-link" @click="toggleJumlahData">Tampilkan Jumlah Data</button>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2"><a href="/" class="d-flex text-white align-items-center">Logout</a></button>
+                    <button class="btn btn-danger m-2"><a href="/"
+                            class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -54,7 +58,7 @@
             </div>
         </div>
 
-        <div id="map" style="height: 100vh; width: 100vw;"></div>
+        <div id="map" style="height: 91vh; width: 100vw;"></div>
 
         <!-- Search Button -->
         <div class=" bg-light p-2 radius leaflet-bar" style="position: absolute; top: 10%; right: 2%; z-index: 1000;">
@@ -92,7 +96,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="editKeterangan" class="form-label">Keterangan</label>
-                                <input type="text" class="form-control" id="editKeterangan">
+                                <textarea type="text" class="form-control" id="editKeterangan"></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="editKondisi" class="form-label">Kondisi</label>
@@ -382,11 +386,19 @@ export default {
                     }
                 });
                 console.log('Data ruas jalan berhasil diperbarui:', response.data);
-                alert('Data ruas jalan berhasil diperbarui');
+                Swal.fire({
+                    text: "Data ruas jalan berhasil diperbarui",
+                    icon: "success"
+                });
+                // alert('Data ruas jalan berhasil diperbarui');
                 this.fetchJalanData();
             } catch (error) {
                 console.error('Gagal memperbarui data ruas jalan:', error);
-                alert('Gagal memperbarui data ruas jalan');
+                Swal.fire({
+                    text: "Gagal memperbarui data ruas jalan",
+                    icon: "error"
+                });
+                // alert('Gagal memperbarui data ruas jalan');
             }
         },
         async deletePolyline(id) {
@@ -399,11 +411,19 @@ export default {
                     }
                 });
                 console.log('Response:', response);
-                alert('Polyline berhasil dihapus');
+                Swal.fire({
+                    text: "Polyline berhasil dihapus",
+                    icon: "success"
+                });
+                // alert('Polyline berhasil dihapus');
                 this.fetchJalanData();
             } catch (error) {
                 console.error('Gagal menghapus polyline:', error);
-                alert('Gagal menghapus polyline');
+                Swal.fire({
+                    text: "Gagal menghapus polyline",
+                    icon: "error"
+                });
+                // alert('Gagal menghapus polyline');
             }
         },
         searchByName() {
@@ -415,7 +435,11 @@ export default {
                 const coordinates = JSON.parse(this.decompressCoordinate(firstMatch.paths));
                 this.map.flyToBounds(coordinates);
             } else {
-                alert('Nama ruas tidak ditemukan.');
+                Swal.fire({
+                    text: "Nama ruas tidak ditemukan.",
+                    icon: "warning"
+                });
+                // alert('Nama ruas tidak ditemukan.');
             }
         },
         countJenisJalan() {

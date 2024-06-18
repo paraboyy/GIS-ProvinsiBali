@@ -17,6 +17,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data">Data Jalan</a>
+                        </li>
                     </ul>
                     <button class="btn btn-danger m-2"><a href="/"
                             class="d-flex text-white align-items-center">Logout</a></button>
@@ -77,6 +80,10 @@
                         <option v-for="desa in desas" :key="desa.id" :value="desa.id">{{ desa.value }}</option>
                     </select>
                 </div>
+                <div class="form-group mt-2">
+                    <input type="text" class="form-control me-2" placeholder="Cari ruas" v-model="searchQuery">
+                    <button class="btn btn-outline-success mt-2" @click="searchByName">Cari</button>
+                </div>
             </div>
         </div>
     </div>
@@ -95,6 +102,8 @@ export default {
             kabupatens: [],
             kecamatans: [],
             desas: [],
+            jalanData: [],
+            searchQuery: '',
             selectedProvince: null,
             selectedKabupaten: null,
             selectedKecamatan: null,
@@ -114,6 +123,9 @@ export default {
                 "Culik": [-8.3423049, 115.6031107], "Talibeng": [-8.5015434, 115.4267757], "Lokasari": [-8.5099149, 115.4192988],
                 "Lokasari": [-8.5099149, 115.4192988], "Kesiman": [-8.6599448, 115.2487942], "Kesiman Pentilan": [-8.6599448, 115.2487942],
                 "Dangin Puri Kelod": [-8.6599448, 115.2491014],
+                "Bayung Cerik": [-8.3058562, 115.2825459],
+                "Bayung Cerik": [-8.3058562, 115.2825459],
+                "Tonja": [-8.6341272, 115.2231676],
                 // Tambahkan koordinat desa lainnya di sini
             },
             kecematanCoordinates: {
@@ -132,6 +144,7 @@ export default {
                 "SUKAWATI": [-8.5823404, 115.2585505], "TEGALLALANG": [-8.3981217, 115.2710165], "SUSUT": [-8.4226661, 115.330208],
                 "BANGLI": [-8.4130735, 115.348215],
                 "TEMBUKU": [-8.414887, 115.376498],
+                "KINTAMANI": [-8.2401583, 115.3239536],
             }
         };
     },
@@ -280,12 +293,13 @@ export default {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                const jalanData = response.data.ruasjalan;
+                const jalanData2 = response.data.ruasjalan;
+                this.jalanData = response.data.ruasjalan;
 
                 // Pastikan data yang diterima adalah array
-                if (Array.isArray(jalanData)) {
+                if (Array.isArray(jalanData2)) {
                     // Loop melalui data jalan
-                    jalanData.forEach(jalan => {
+                    jalanData2.forEach(jalan => {
                         try {
                             // Dekompresi koordinat sebelum menambahkan polyline ke peta
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
@@ -389,7 +403,23 @@ export default {
                 const [lat, lng] = this.kecematanCoordinates[kecamatan.value];
                 this.map.setView([lat, lng], 13);
             }
-        }
+        },
+        searchByName() {
+            const searchQuery = this.searchQuery.toLowerCase().trim();
+            const matchedPolylines = this.jalanData.filter(jalan => jalan.nama_ruas.toLowerCase().includes(searchQuery));
+            if (matchedPolylines.length > 0) {
+                // Zoom ke ruas jalan
+                const firstMatch = matchedPolylines[0];
+                const coordinates = JSON.parse(this.decompressCoordinate(firstMatch.paths));
+                this.map.flyToBounds(coordinates);
+            } else {
+                Swal.fire({
+                    text: "Nama ruas tidak ditemukan.",
+                    icon: "warning"
+                });
+                // alert('Nama ruas tidak ditemukan.');
+            }
+        },
     }
 }
 </script>

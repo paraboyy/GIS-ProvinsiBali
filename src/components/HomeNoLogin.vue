@@ -126,7 +126,11 @@ export default {
                         }, 2000);
                         this.closeLoginModal();
                     } else {
-                        alert(data.message || 'Login failed');
+                        Swal.fire({
+                            text: "Login Failed",
+                            icon: "error"
+                        });
+                        // alert(data.message || 'Login failed');
                     }
                 } catch (error) {
                     console.error('Error during login:', error);

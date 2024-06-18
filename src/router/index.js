@@ -4,7 +4,8 @@ import HomeNologin from '../components/HomeNoLogin.vue'
 import Waiting from '../components/WaitingPage.vue'
 import CreateRuas from '../components/CreateRuas.vue'
 import RoadTrack from '../components/RoadTracking.vue'
-import Uji from '../components/ujihas.vue'
+import DataJalan from '../components/DataJalan.vue'
+import EditRuasJalan from '../components/EditRuasJalan.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -35,9 +36,14 @@ const router = createRouter({
       component: RoadTrack
     },
     {
-      path: '/uji',
-      name: 'Uji',
-      component: Uji
+      path: '/data',
+      name: 'DataJalan',
+      component: DataJalan
+    },
+    {
+      path: '/editruasjalan',
+      name: 'EditRuasJalan',
+      component: EditRuasJalan
     },
   ]
 })

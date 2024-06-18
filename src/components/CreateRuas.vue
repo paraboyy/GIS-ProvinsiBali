@@ -17,6 +17,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data">Data Jalan</a>
+                        </li>
                     </ul>
                     <button class="btn btn-danger m-2"><a href="/"
                             class="d-flex text-white align-items-center">Logout</a></button>
@@ -32,20 +35,22 @@
         <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
             <div class=" card shadow mx-2" style="width: 100%;">
                 <div class="row justify-content-center">
-                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2">Undo Koordinat</button>
-                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2">Delete Koordinat</button>
+                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2">Undo
+                        Koordinat</button>
+                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2">Delete
+                        Koordinat</button>
                 </div>
                 <div class="card-body">
                     <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <div class="card shadow mx-2">
                     <div class="card-body">
                         <form @submit.prevent="tambahJalan">
                             <div class="mb-3">
                                 <label for="province" class="form-label">Pilih Provinsi:</label>
-                                <select id="province" class="form-select" v-model="selectedProvince"
+                                <select id="province" class="form-select shadow-2" v-model="selectedProvince"
                                     @change="onProvinceChange">
                                     <option v-for="province in provinces" :key="province.id" :value="province.id">
                                         {{ province.provinsi }}
@@ -54,7 +59,7 @@
                             </div>
                             <div v-if="kabupatens.length" class="mb-3">
                                 <label for="kabupaten" class="form-label">Pilih Kabupaten:</label>
-                                <select id="kabupaten" class="form-select" v-model="selectedKabupaten"
+                                <select id="kabupaten" class="form-select shadow-2" v-model="selectedKabupaten"
                                     @change="onKabupatenChange">
                                     <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">
                                         {{ kabupaten.value }}
@@ -63,36 +68,43 @@
                             </div>
                             <div v-if="kecamatans.length" class="mb-3">
                                 <label for="kecamatan" class="form-label">Pilih Kecamatan:</label>
-                                <select id="kecamatan" class="form-select" v-model="selectedKecamatan"
+                                <select id="kecamatan" class="form-select shadow-2" v-model="selectedKecamatan"
                                     @change="onKecamatanChange">
                                     <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">
                                         {{ kecamatan.value }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="desa">Nama Desa:</label>
-                                <select id="desa" class="form-select" v-model="selectedDesa" @change="onDesaChange">
-                                    <option v-for="desa in desas" :key="desa.id" :value="desa.id">
-                                        {{ desa.value }}
-                                    </option>
-                                </select>
+                            <div class="dp-flex mb-2">
+                                <div class="form-group w-45 mr-1">
+                                    <label for="desa">Nama Desa:</label>
+                                    <select id="desa" class="form-select shadow-2" v-model="selectedDesa"
+                                        @change="onDesaChange">
+                                        <option v-for="desa in desas" :key="desa.id" :value="desa.id">
+                                            {{ desa.value }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group w-45">
+                                    <label for="nama_ruas">Nama Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.nama_ruas"
+                                        required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="nama_ruas">Nama Ruas:</label>
-                                <input type="text" class="form-control" v-model="jalanForm.nama_ruas" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="lebar">Lebar Ruas:</label>
-                                <input type="text" class="form-control" v-model="jalanForm.lebar" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="kode_ruas">Kode Ruas:</label>
-                                <input type="text" class="form-control" v-model="jalanForm.kode_ruas" required>
+                            <div class="dp-flex mb-2">
+                                <div class="form-group w-45 mr-1">
+                                    <label for="lebar">Lebar Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.lebar" required>
+                                </div>
+                                <div class="form-group w-45">
+                                    <label for="kode_ruas">Kode Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.kode_ruas"
+                                        required>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="eksisting">Eksisting:</label>
-                                <select id="eksisting" class="form-select" v-model="selectedEksisting"
+                                <select id="eksisting" class="form-select shadow-2" v-model="selectedEksisting"
                                     @change="onEksistingChange">
                                     <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.id">
                                         {{ eksisting.eksisting }}
@@ -101,7 +113,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="kondisi">Kondisi:</label>
-                                <select id="kondisi" class="form-select" v-model="selectedKondisi"
+                                <select id="kondisi" class="form-select shadow-2" v-model="selectedKondisi"
                                     @change="onKondisiChange">
                                     <option v-for="kondisi in kondisis" :key="kondisi.id" :value="kondisi.id">
                                         {{ kondisi.kondisi }}
@@ -110,7 +122,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="jenis_jalan">Jenis Jalan:</label>
-                                <select id="jenis_jalan" class="form-select" v-model="selectedJenisJalan"
+                                <select id="jenis_jalan" class="form-select shadow-2" v-model="selectedJenisJalan"
                                     @change="onJenisJalanChange">
                                     <option v-for="jenis_jalan in jenisJalans" :key="jenis_jalan.id"
                                         :value="jenis_jalan.id">
@@ -120,9 +132,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="keterangan">Keterangan:</label>
-                                <input type="text" class="form-control" v-model="jalanForm.keterangan" required>
+                                <input type="text" class="form-control shadow-2" v-model="jalanForm.keterangan"
+                                    required>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-4">Tambah Jalan</button>
+                            <button type="submit" class="btn btn-primary mt-4 shadow-2">Tambah Jalan</button>
                         </form>
                     </div>
                 </div>
@@ -341,7 +354,11 @@ export default {
                     }
                 });
                 console.log(response.data);
-                alert('Jalan berhasil ditambahkan');
+                Swal.fire({
+                    text: "Jalan berhasil ditambahkan",
+                    icon: "success"
+                });
+                // alert('Jalan berhasil ditambahkan');
 
                 this.fetchJalanData();
                 this.jalanForm.nama_ruas = '';
@@ -357,7 +374,11 @@ export default {
                 }
             } catch (error) {
                 console.error(error);
-                alert('Gagal menambahkan jalan');
+                Swal.fire({
+                    text: "Gagal menambahkan jalan",
+                    icon: "error"
+                });
+                // alert('Gagal menambahkan jalan');
             }
         },
         async fetchJalanData() {
