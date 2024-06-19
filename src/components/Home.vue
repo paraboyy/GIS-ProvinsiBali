@@ -305,7 +305,8 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
+                            this.displayDataOnMap();
+                            // const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
                             polyline.on('click', () => {
                                 const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
                                 const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
@@ -333,6 +334,29 @@ export default {
             } catch (error) {
                 console.error(error);
             }
+        },
+        displayDataOnMap() {
+            this.layerGroup = L.layerGroup().addTo(this.map);
+
+            this.jalanData.forEach(jalan => {
+                try {
+                    const decompressedPolyline = this.decompressCoordinate(jalan.paths);
+
+                    const kondisi = this.kondisiData[jalan.kondisi_id];
+                    let color = 'blue';
+                    if (kondisi === 'Rusak') {
+                        color = 'red';
+                    } else if (kondisi === 'Sedang') {
+                        color = 'darkred';
+                    } else if (kondisi === 'Baik') {
+                        color = 'green';
+                    }
+
+                    const polyline = L.polyline(JSON.parse(decompressedPolyline), { color }).addTo(this.map);
+                } catch (error) {
+                    console.error('Error parsing coordinate data:', error);
+                }
+            });
         },
         async changeMapType() {
             // Hapus layer peta yang ada

@@ -86,7 +86,7 @@
                             <td>{{ nomor + 1 }}</td>
                             <td>{{ getNamaDesa(jalan.desa_id) }}</td>
                             <td>{{ jalan.nama_ruas }}</td>
-                            <td>{{ jalan.panjang }} M</td>
+                            <td>{{ Math.floor(jalan.panjang) }} M</td>
                             <td>{{ jalan.lebar }} M</td>
                             <td>{{ getNamaEksisting(jalan.eksisting_id) }}</td>
                             <td>{{ getNamaKondisi(jalan.kondisi_id) }}</td>
