@@ -69,6 +69,7 @@
                 <table class="table table-hover table-bordered">
                     <thead class="table-primary">
                         <tr>
+                            <th scope="col">No</th>
                             <th scope="col">Nama Desa</th>
                             <th scope="col">Nama Ruas</th>
                             <th scope="col">Panjang Jalan</th>
@@ -82,10 +83,11 @@
                     </thead>
                     <tbody>
                         <tr v-for="jalan in paginatedData" :key="jalan.id">
+                            <td>{{ nomor + 1 }}</td>
                             <td>{{ getNamaDesa(jalan.desa_id) }}</td>
                             <td>{{ jalan.nama_ruas }}</td>
-                            <td>{{ jalan.panjang }}</td>
-                            <td>{{ jalan.lebar }}</td>
+                            <td>{{ jalan.panjang }} M</td>
+                            <td>{{ jalan.lebar }} M</td>
                             <td>{{ getNamaEksisting(jalan.eksisting_id) }}</td>
                             <td>{{ getNamaKondisi(jalan.kondisi_id) }}</td>
                             <td>{{ getNamaJenisJalan(jalan.jenisjalan_id) }}</td>
@@ -115,6 +117,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            nomor: 1,
             dataruasjalan: [],
             desas: [],
             eksistings: [],
@@ -124,7 +127,7 @@ export default {
             jumlahKondisiJalan: {},
             pageSize: 10,
             kondisiData: {},
-            searchQuery: '' // Tambahkan properti untuk query pencarian
+            searchQuery: ''
         }
     },
     computed: {

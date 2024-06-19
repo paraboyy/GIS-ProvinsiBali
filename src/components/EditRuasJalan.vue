@@ -17,10 +17,25 @@
                                 required>
                         </div>
                         <div class="mb-3 w-45">
-                            <label for="editNamaDesa" class="form-label">Nama Desa</label>
-                            <select class="form-control shadow-2" id="editNamaDesa" v-model="jalan.desa_id"
+                            <label for="editNamaKabupaten" class="form-label">Nama Kabupaten</label>
+                            <select class="form-control shadow-2" id="editNamaKabupaten" v-model="selectedKabupaten"
+                                @change="fetchKecamatanByKabupatenId">
+                                <option v-for="(name, id) in kabupatenData" :value="id">{{ name }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="dp-flex">
+                        <div class="mb-3 w-45 mr-2">
+                            <label for="editNamaKecamatan" class="form-label">Nama Kecamatan</label>
+                            <select class="form-control shadow-2" id="editNamaKecamatan" v-model="selectedKecamatan"
                                 @change="fetchDesaByKecamatanId">
-                                <option v-for="(value, key) in desaData" :value="key">{{ value }}</option>
+                                <option v-for="(name, id) in kecamatanData" :value="id">{{ name }}</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 w-45">
+                            <label for="editNamaDesa" class="form-label">Nama Desa</label>
+                            <select class="form-control shadow-2" id="editNamaDesa" v-model="jalan.desa_id">
+                                <option v-for="(name, id) in desaData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                     </div>
@@ -38,21 +53,21 @@
                     </div>
                     <div class="dp-flex">
                         <div class="mb-3 mr-1">
-                            <label for="editKondisi " class="form-label">Kondisi</label>
+                            <label for="editKondisi" class="form-label">Kondisi</label>
                             <select class="form-control shadow-2" id="editKondisi" v-model="jalan.kondisi_id">
-                                <option v-for="(value, key) in kondisiData" :value="key">{{ value }}</option>
+                                <option v-for="(name, id) in kondisiData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                         <div class="mb-3 mr-1">
                             <label for="editEksisting" class="form-label">Eksisting</label>
                             <select class="form-control shadow-2" id="editEksisting" v-model="jalan.eksisting_id">
-                                <option v-for="(value, key) in eksistingData" :value="key">{{ value }}</option>
+                                <option v-for="(name, id) in eksistingData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="editJenisJalan" class="form-label">Jenis Jalan</label>
                             <select class="form-control shadow-2" id="editJenisJalan" v-model="jalan.jenisjalan_id">
-                                <option v-for="(value, key) in jenisJalanData" :value="key">{{ value }}</option>
+                                <option v-for="(name, id) in jenisJalanData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                     </div>
@@ -61,7 +76,7 @@
                         <textarea class="form-control shadow-2" id="keterangan" v-model="jalan.keterangan"></textarea>
                     </div>
                     <button type="submit" class="shadow-2 btn btn-primary mx-2">Update</button>
-                    <button class="btn btn-danger shadow-2" @click="back()">Kembali</button>
+                    <button class="btn btn-danger shadow-2" @click="back">Kembali</button>
                 </form>
             </div>
         </div>
@@ -78,7 +93,15 @@ export default {
     data() {
         return {
             jalan: {
-                desa_id: null // inisialisasi desa_id dengan null
+                desa_id: null,
+                kode_ruas: '',
+                nama_ruas: '',
+                lebar: '',
+                panjang: '',
+                kondisi_id: '',
+                eksisting_id: '',
+                jenisjalan_id: '',
+                keterangan: '',
             },
             polyline: null,
             polylineCoords: [],
@@ -87,7 +110,11 @@ export default {
             kondisiData: {},
             eksistingData: {},
             jenisJalanData: {},
-            desaData: {}
+            desaData: {},
+            kecamatanData: {},
+            kabupatenData: {},
+            selectedKabupaten: null,
+            selectedKecamatan: null,
         };
     },
     created() {
@@ -95,7 +122,7 @@ export default {
         this.fetchKondisiData();
         this.fetchEksistingData();
         this.fetchJenisJalanData();
-        this.fetchDesaData();
+        this.fetchAllKabupaten();
     },
     mounted() {
         this.map = L.map('map').setView([-8.4253951, 115.1832866], 10);
@@ -120,12 +147,15 @@ export default {
                 });
                 this.jalan = response.data.ruasjalan;
 
-                // Load existing polyline data if available
+                if (this.jalan.desa_id) {
+                    await this.fetchKecamatanByDesaId(this.jalan.desa_id);
+                }
+
                 if (this.jalan.paths) {
                     this.polylineCoords = JSON.parse(this.decompressCoordinate(this.jalan.paths));
-                    this.polyline = L.polyline(this.polylineCoords, { color: 'darkblue' }).addTo(this.map);
+                    this.polyline = L.polyline(this.polylineCoords, { color: 'darkblue', draggable: true }).addTo(this.map);
+                    this.polyline.on('dragend', this.onPolylineDragEnd);
 
-                    // Zoom to the polyline
                     this.map.fitBounds(this.polyline.getBounds());
                 }
             } catch (error) {
@@ -137,7 +167,6 @@ export default {
                 const token = localStorage.getItem('token');
                 const id = localStorage.getItem('id');
 
-                // Update jalan object with compressed polyline data
                 if (this.polylineCoords.length) {
                     this.jalan.paths = this.compressCoordinate(JSON.stringify(this.polylineCoords));
                 }
@@ -150,17 +179,16 @@ export default {
 
                 Swal.fire({
                     title: 'Success!',
-                    text: 'Ruas Jalan updated successfully',
-                    icon: 'success',
-                    confirmButtonText: 'OK'
+                    text: 'Berhasil memperbarui Data',
+                    icon: 'success'
+                }).then(() => {
+                    this.$router.push('/data');
                 });
-
-                this.$router.push('/data');
             } catch (error) {
                 console.error(error);
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Failed to update Ruas Jalan',
+                    text: 'Gagal memperbarui Data',
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
@@ -212,15 +240,24 @@ export default {
                     return;
                 }
 
-                // const coordinates = JSON.parse(decompressedPolyline);
-                const polyline = L.polyline(coordinates, { color: 'darkblue' }).addTo(this.map);
+                const polyline = L.polyline(coordinates, { color: 'darkblue', draggable: true }).addTo(this.map);
+                polyline.on('dragend', this.onPolylineDragEnd);
                 this.polylines.push(polyline);
 
-                // Zoom to the polyline
                 this.map.fitBounds(polyline.getBounds());
             } catch (error) {
                 console.error('Error processing jalan object:', jalan, error);
             }
+        },
+        onPolylineDragEnd(event) {
+            const newCoords = event.target.getLatLngs();
+            const index = this.polylines.findIndex(polyline => polyline === event.target);
+
+            if (index !== -1) {
+                this.polylineCoords[index] = newCoords;
+            }
+
+            this.polylineString = JSON.stringify(this.polylineCoords);
         },
         decompressCoordinate(compressedCoordinate) {
             const compressed = Uint8Array.from(atob(compressedCoordinate), c => c.charCodeAt(0));
@@ -246,7 +283,8 @@ export default {
                 this.map.removeLayer(this.polyline);
             }
 
-            this.polyline = L.polyline(this.polylineCoords, { color: 'red' }).addTo(this.map);
+            this.polyline = L.polyline(this.polylineCoords, { color: 'red', draggable: true }).addTo(this.map);
+            this.polyline.on('dragend', this.onPolylineDragEnd);
 
             this.jalan.panjang = this.calculatePolylineLength(this.polylineCoords);
             this.polylineString = JSON.stringify(this.polylineCoords);
@@ -302,7 +340,7 @@ export default {
                 console.error('Gagal mengambil data jenis jalan:', error);
             }
         },
-        async fetchDesaData() {
+        async fetchAllKabupaten() {
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
@@ -310,49 +348,74 @@ export default {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                const desaData = response.data.desa;
+                const kabupatenData = response.data.kabupaten;
 
-                desaData.forEach(item => {
-                    this.desaData[item.id] = item.desa;
+                kabupatenData.forEach(item => {
+                    this.kabupatenData[item.id] = item.kabupaten;
                 });
             } catch (error) {
-                console.error('Gagal mengambil data desa', error);
+                console.error('Gagal mengambil data kabupaten', error);
+            }
+        },
+        async fetchKecamatanByKabupatenId() {
+            try {
+                const token = localStorage.getItem('token');
+                const idKabupaten = this.selectedKabupaten;
+
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatan/${idKabupaten}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                this.kecamatanData = {};
+                response.data.kecamatan.forEach(item => {
+                    this.kecamatanData[item.id] = item.value;
+                });
+
+                this.selectedKecamatan = null;
+                this.desaData = {};
+            } catch (error) {
+                console.error('Gagal mengambil data kecamatan berdasarkan kabupaten', error);
             }
         },
         async fetchDesaByKecamatanId() {
             try {
                 const token = localStorage.getItem('token');
-                const idKecamatan = this.jalan.desa_id;
+                const idKecamatan = this.selectedKecamatan;
 
-                // Fetch Kecamatan berdasarkan id desa
-                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatanbydesaid/${idKecamatan}`, {
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/desa/${idKecamatan}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
 
-                const desaByKecamatan = response.data.kecamatan;
-                const idDesa = response.data.kecamatan.id;
-
-                const response2 = await axios.get(`https://gisapis.manpits.xyz/api/desa/${idDesa}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                this.desaData = {};
+                response.data.desa.forEach(item => {
+                    this.desaData[item.id] = item.value;
                 });
-
-                const desaData = response.data.desa;
-
-                desaData.forEach(item => {
-                    this.desaData[item.id] = item.desa;
-                });
-
-                // Update desaData dengan desa yang diperoleh
-                // this.desaData = {};
-                // desaByKecamatan.forEach(item => {
-                //     this.desaData[item.id] = item.desa;
-                // });
             } catch (error) {
                 console.error('Gagal mengambil data desa berdasarkan kecamatan', error);
+            }
+        },
+        async fetchKecamatanByDesaId(desaId) {
+            try {
+                const token = localStorage.getItem('token');
+
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatanbydesaid/${desaId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const kecamatan = response.data.kecamatan;
+                this.selectedKabupaten = response.data.kabupaten.id;
+                this.selectedKecamatan = kecamatan.id;
+
+                await this.fetchKecamatanByKabupatenId();
+                await this.fetchDesaByKecamatanId();
+            } catch (error) {
+                console.error('Gagal mengambil data kecamatan berdasarkan desa', error);
             }
         },
         calculatePolylineLength(coords) {
