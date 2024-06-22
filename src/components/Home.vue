@@ -304,25 +304,47 @@ export default {
                             // Dekompresi koordinat sebelum menambahkan polyline ke peta
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
+                            const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id];
+                            let color = 'blue';
+                            if (jenisJalan === 'Desa') {
+                                color = 'blue';
+                            } else if (jenisJalan === 'Kabupaten') {
+                                color = 'red';
+                            } else if (jenisJalan === 'Provinsi') {
+                                color = 'green';
+                            }
+
+                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color }).addTo(this.map);
+
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            this.displayDataOnMap();
+                            // this.displayDataOnMap();
                             // const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
                             polyline.on('click', () => {
                                 const eksisting = this.eksistingData[jalan.eksisting_id] || 'Unknown';
                                 const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id] || 'Unknown';
                                 const kondisi = this.kondisiData[jalan.kondisi_id] || 'Unknown';
+                                const desa = this.desas[jalan.desa_id] || 'Unknown';
 
                                 polyline.bindPopup(`
-                                    <strong>Nama Ruas:</strong> ${jalan.nama_ruas}<br>
-                                    <strong>Kondisi:</strong> ${this.kondisiData[jalan.kondisi_id] || 'Unknown'}<br>
-                                    <strong>Lebar:</strong> ${jalan.lebar}<br>
-                                    <strong>Kode Ruas:</strong> ${jalan.kode_ruas}<br>
-                                    <strong>Eksisting:</strong> ${eksisting}<br>
-                                    <strong>Jenis Jalan:</strong> ${jenisJalan}<br>
-                                    <strong>Kondisi Jalan:</strong> ${kondisi}<br>
-                                    <strong>Keterangan:</strong> ${jalan.keterangan}<br>
-                                    <strong>Panjang:</strong> ${jalan.panjang}
-                                `).openPopup();
+                                    <h4 class="text-center">Jln. ${jalan.nama_ruas}</h4>
+                                    <br>
+                                    <div class="dp-in-table">
+                                        <strong class="mx-1">Kode Ruas:</strong> ${jalan.kode_ruas}<br>
+                                        <strong class="mx-1">Nama Desa:</strong> ${desa}<br>
+                                        <strong class="mx-1">Jenis Jalan:</strong> ${jenisJalan}<br>
+                                        <strong class="mx-1">Keterangan:</strong> ${jalan.keterangan}<br>
+                                    </div>
+                                    <div class="dp-in-table">
+                                        <strong>Lebar:</strong> ${jalan.lebar}<br>
+                                        <strong>Panjang:</strong> ${jalan.panjang}<br>
+                                        <strong>Eksisting:</strong> ${eksisting}<br>
+                                        <strong>Kondisi Jalan:</strong> ${kondisi}<br>
+                                    </div>
+                                `, {
+                                    maxWidth: 400,
+                                    minWidth: 300
+                                }).openPopup();
+
                             });
                         } catch (error) {
                             console.error('Error parsing coordinate data:', error);

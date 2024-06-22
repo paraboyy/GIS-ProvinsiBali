@@ -98,6 +98,10 @@
         5px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
+.tx-shadow {
+    text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
 .w-15 {
     width: 15%;
 }
@@ -169,6 +173,14 @@
 
 .dp-flex {
     display: flex;
+}
+
+.dp-in-table {
+    display: inline-table;
+}
+
+.wd-90 {
+    width: 90%;
 }
 
 .pagination button {

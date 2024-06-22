@@ -35,6 +35,7 @@
         <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
             <div class=" card shadow mx-2" style="width: 100%;">
                 <div class="row justify-content-center">
+                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2">Edit Polyline</button>
                     <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2">Undo
                         Koordinat</button>
                     <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2">Delete
@@ -148,6 +149,7 @@
 import axios from 'axios';
 import L from 'leaflet';
 import pako from 'pako';
+import 'leaflet-editable';
 
 export default {
     data() {
@@ -226,6 +228,7 @@ export default {
         this.map.on('click', this.onMapClick);
 
         this.fetchJalanData();
+        this.enableEditMode();
     },
 
     created() {
@@ -247,6 +250,12 @@ export default {
                 this.eksistings = response.data.eksisting;
             } catch (error) {
                 console.error(error);
+            }
+        },
+        enableEditMode() {
+            // Aktifkan mode edit pada polyline
+            if (this.polyline) {
+                this.polyline.enableEdit();
             }
         },
         async fetchKondisis() {
