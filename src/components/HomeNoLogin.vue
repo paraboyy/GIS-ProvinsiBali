@@ -21,7 +21,7 @@
                             <a class="nav-link active" href="#">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2"><a href="/"
+                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
                             class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
@@ -34,7 +34,7 @@
 
         <div class="dp-flex justify-content-center">
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1">
+                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Rusak</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
                         dataruasjalan.length *
@@ -43,7 +43,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1">
+                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Sedang</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
                         dataruasjalan.length *
@@ -52,7 +52,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-info p-3 br-1 shadow-1">
+                <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Bagus</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
                         dataruasjalan.length *
@@ -61,7 +61,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-info p-3 br-1 shadow-1">
+                <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Desa</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
                         dataruasjalan.length *
@@ -70,7 +70,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1">
+                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Kabupaten</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
                         dataruasjalan.length *
@@ -79,7 +79,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1">
+                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Provinsi</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
                         dataruasjalan.length *
@@ -88,15 +88,60 @@
             </div>
 
             <div class="w-20 px-5 pt-3">
-                <button class="btn btn-primary shadow-2 px-4" @click="showJenisJalan">Jenis Jalan</button>
+                <button class="btn btn-primary mt-4 shadow-2 px-4" @click="showJenisJalan">Jenis Jalan</button>
                 <button class="btn btn-success mt-3 shadow-2 px-3" @click="showKondisiJalan">Kondisi Jalan</button>
             </div>
         </div>
 
-        <div class="mt-5 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
-            <input type="text" v-model="searchQuery"
-                placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
-                class="form-control mb-4">
+        <div class="mt-5 mx-5 p-4 shadow-3 bg-light mb-2 br-1">
+            <div class="dp-flex">
+                <input type="text" v-model="searchQuery"
+                    placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
+                    class="form-control w-80">
+                <button class="btn btn-info ms-3 shadow-2" @click="toggleFilterDialog">Filter</button>
+            </div>
+
+            <div v-if="showFilterDialog" class="filter-dialog p-3 mb-4 mt-4 bg-light shadow-2 br-1">
+                <h5>Filter Data</h5>
+                <div class="mb-2">
+                    <label for="filter-kondisi">Kondisi Jalan:</label>
+                    <select id="filter-kondisi" v-model="filterKondisi" class="form-control">
+                        <option value="">Semua</option>
+                        <option value="Rusak">Rusak</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Sedang">Sedang</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="filter-jenis">Jenis Jalan:</label>
+                    <select id="filter-jenis" v-model="filterJenis" class="form-control">
+                        <option value="">Semua</option>
+                        <option value="Desa">Desa</option>
+                        <option value="Kabupaten">Kabupaten</option>
+                        <option value="Provinsi">Provinsi</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="filter-desa">Desa:</label>
+                    <select id="filter-desa" v-model="filterDesa" class="form-control">
+                        <option value="">Semua</option>
+                        <option v-for="desa in desas" :key="desa.id" :value="desa.desa">{{ desa.desa }}</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label for="filter-eksisting">Eksisting:</label>
+                    <select id="filter-eksisting" v-model="filterEksisting" class="form-control">
+                        <option value="">Semua</option>
+                        <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.eksisting">{{
+                eksisting.eksisting }}</option>
+                    </select>
+                </div>
+                <button class="btn btn-success shadow-2" @click="applyFilter">Terapkan Filter</button>
+                <button class="btn btn-danger ms-2 shadow-2" @click="resetFilter">Reset</button>
+            </div>
+        </div>
+
+        <div class="mt-2 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
             <div v-if="filteredData.length">
                 <table class="table table-hover table-bordered">
                     <thead class="table-primary">
@@ -125,18 +170,18 @@
                             <td>{{ getNamaJenisJalan(jalan.jenisjalan_id) }}</td>
                             <td>{{ jalan.keterangan }}</td>
                             <td class="dp-in-grid">
-                                <button class="btn btn-primary mt-2 shadow"
-                                    @click="editRuasJalan(jalan.id)">Edit</button>
-                                <button class="btn btn-danger mt-2 shadow"
-                                    @click="deleteRuasJalan(jalan.id)">Delete</button>
+                                <button class="btn btn-warning mt-2 shadow" @click="editRuasJalan(jalan.id)"><i
+                                        class="bi bi-pencil-fill"></i></button>
+                                <button class="btn btn-danger mt-2 shadow" @click="deleteRuasJalan(jalan.id)"> <i
+                                        class="bi bi-trash-fill"></i></button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="pagination justify-content-center">
-                    <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+                    <button class="shadow-2" @click="prevPage" :disabled="currentPage === 1">Previous</button>
                     <span class="text-dark">Page {{ currentPage }} of {{ totalPages }}</span>
-                    <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+                    <button class="shadow-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
                 </div>
             </div>
         </div>
@@ -145,6 +190,7 @@
 
 <script>
 import axios from 'axios';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default {
     data() {
@@ -163,26 +209,53 @@ export default {
             searchQuery: '',
             showJenisJalanData: false,
             showKondisiJalanData: true,
-            // jumlahJenisJalan: {},
+            showFilterDialog: false,
+            filterKondisi: '',
+            filterJenis: '',
+            filterDesa: '',
+            filterEksisting: '',
         }
     },
     computed: {
         filteredData() {
-            if (!this.searchQuery) return this.dataruasjalan;
-            return this.dataruasjalan.filter(jalan => {
-                const namaRuas = jalan.nama_ruas.toLowerCase();
-                const eksisting = this.getNamaEksisting(jalan.eksisting_id).toLowerCase();
-                const kondisi = this.getNamaKondisi(jalan.kondisi_id).toLowerCase();
-                const jenisJalan = this.getNamaJenisJalan(jalan.jenisjalan_id).toLowerCase();
-                const query = this.searchQuery.toLowerCase();
+            let filtered = this.dataruasjalan;
 
-                return (
-                    namaRuas.includes(query) ||
-                    eksisting.includes(query) ||
-                    kondisi.includes(query) ||
-                    jenisJalan.includes(query)
-                );
-            });
+            if (this.searchQuery) {
+                const query = this.searchQuery.toLowerCase();
+                filtered = filtered.filter(jalan => {
+                    const namaRuas = jalan.nama_ruas.toLowerCase();
+                    const eksisting = this.getNamaEksisting(jalan.eksisting_id).toLowerCase();
+                    const kondisi = this.getNamaKondisi(jalan.kondisi_id).toLowerCase();
+                    const jenisJalan = this.getNamaJenisJalan(jalan.jenisjalan_id).toLowerCase();
+                    const namaDesa = this.getNamaDesa(jalan.desa_id).toLowerCase();
+
+                    return (
+                        namaRuas.includes(query) ||
+                        eksisting.includes(query) ||
+                        kondisi.includes(query) ||
+                        jenisJalan.includes(query) ||
+                        namaDesa.includes(query)
+                    );
+                });
+            }
+
+            if (this.filterKondisi) {
+                filtered = filtered.filter(jalan => this.getNamaKondisi(jalan.kondisi_id) === this.filterKondisi);
+            }
+
+            if (this.filterJenis) {
+                filtered = filtered.filter(jalan => this.getNamaJenisJalan(jalan.jenisjalan_id) === this.filterJenis);
+            }
+
+            if (this.filterDesa) {
+                filtered = filtered.filter(jalan => this.getNamaDesa(jalan.desa_id) === this.filterDesa);
+            }
+
+            if (this.filterEksisting) {
+                filtered = filtered.filter(jalan => this.getNamaEksisting(jalan.eksisting_id) === this.filterEksisting);
+            }
+
+            return filtered;
         },
         paginatedData() {
             const start = (this.currentPage - 1) * this.pageSize;
@@ -201,6 +274,21 @@ export default {
         this.fetchJenisJalans();
     },
     methods: {
+        toggleFilterDialog() {
+            this.showFilterDialog = !this.showFilterDialog;
+        },
+        applyFilter() {
+            this.currentPage = 1; // Reset to the first page
+            this.showFilterDialog = false;
+        },
+        resetFilter() {
+            this.filterKondisi = '';
+            this.filterJenis = '';
+            this.filterDesa = '';
+            this.filterEksisting = '';
+            this.searchQuery = '';
+            this.currentPage = 1;
+        },
         showJenisJalan() {
             this.showJenisJalanData = true;
             this.showKondisiJalanData = false;

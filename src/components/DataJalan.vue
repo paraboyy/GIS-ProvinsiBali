@@ -34,7 +34,7 @@
 
         <div class="dp-flex justify-content-center">
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1">
+                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Rusak</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
                         dataruasjalan.length *
@@ -43,7 +43,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1">
+                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Sedang</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
                         dataruasjalan.length *
@@ -52,7 +52,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-info p-3 br-1 shadow-1">
+                <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Bagus</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
                         dataruasjalan.length *
@@ -61,7 +61,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-info p-3 br-1 shadow-1">
+                <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Desa</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
                         dataruasjalan.length *
@@ -70,7 +70,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1">
+                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Kabupaten</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
                         dataruasjalan.length *
@@ -79,7 +79,7 @@
             </div>
 
             <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1">
+                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Provinsi</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
                         dataruasjalan.length *
@@ -93,10 +93,12 @@
             </div>
         </div>
 
-        <div class="mt-5 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
+        <div class="mt-5 mx-5 p-4 shadow-3 bg-light mb-2 br-1">
             <input type="text" v-model="searchQuery"
                 placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
-                class="form-control mb-4">
+                class="form-control">
+        </div>
+        <div class="mt-2 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
             <div v-if="filteredData.length">
                 <table class="table table-hover table-bordered">
                     <thead class="table-primary">
@@ -125,18 +127,18 @@
                             <td>{{ getNamaJenisJalan(jalan.jenisjalan_id) }}</td>
                             <td>{{ jalan.keterangan }}</td>
                             <td class="dp-in-grid">
-                                <button class="btn btn-primary mt-2 shadow"
-                                    @click="editRuasJalan(jalan.id)">Edit</button>
-                                <button class="btn btn-danger mt-2 shadow"
-                                    @click="deleteRuasJalan(jalan.id)">Delete</button>
+                                <button class="btn btn-warning mt-2 shadow" @click="editRuasJalan(jalan.id)"><i
+                                        class="bi bi-pencil-fill"></i></button>
+                                <button class="btn btn-danger mt-2 shadow" @click="deleteRuasJalan(jalan.id)"> <i
+                                        class="bi bi-trash-fill"></i></button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div class="pagination justify-content-center">
-                    <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+                    <button class="shadow-2" @click="prevPage" :disabled="currentPage === 1">Previous</button>
                     <span class="text-dark">Page {{ currentPage }} of {{ totalPages }}</span>
-                    <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+                    <button class="shadow-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
                 </div>
             </div>
         </div>
@@ -145,6 +147,7 @@
 
 <script>
 import axios from 'axios';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default {
     data() {

@@ -28,6 +28,10 @@
     border-radius: 3rem;
 }
 
+.b-2w {
+    border: 2px solid white;
+}
+
 .radius {
     border-radius: 10px;
 }
@@ -85,6 +89,10 @@
     width: 45%;
 }
 
+.w-80 {
+    width: 80%;
+}
+
 .shadow-1{
     box-shadow: 
         inset 5px 5px 15px rgba(0, 0, 0, 0.3),
@@ -105,6 +113,10 @@
 .shadow-2:hover{
     box-shadow: 
         0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.p-fixed {
+    position: fixed;
 }
 
 .shadow-4{
@@ -204,7 +216,6 @@
     border-radius: 1rem;
     padding: 1% 2% 1% 2%;
     margin: 0% 2% 0% 2%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pagination span {

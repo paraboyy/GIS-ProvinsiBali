@@ -116,6 +116,7 @@
 import L from 'leaflet';
 import axios from 'axios';
 import pako from 'pako';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default {
     data() {
@@ -524,7 +525,7 @@ export default {
                                         <strong>Eksisting:</strong> ${eksisting}<br>
                                         <strong>Kondisi Jalan:</strong> ${kondisi}<br>
                                     </div>
-                                    <button class="btn mt-1 btn-warning" onclick="saveAndEdit('${jalan.id}')">Edit</button>
+                                    <button class="btn mt-1 btn-warning shadow-2 p-fixed" onclick="saveAndEdit('${jalan.id}')"><i class="bi bi-pencil-fill"></i>Edit</button>
                                 `, {
                                     maxWidth: 400,
                                     minWidth: 300

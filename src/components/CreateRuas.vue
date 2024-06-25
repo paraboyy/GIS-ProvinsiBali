@@ -35,7 +35,8 @@
         <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
             <div class=" card shadow mx-2" style="width: 100%;">
                 <div class="row justify-content-center">
-                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2">Edit Polyline</button>
+                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2">Edit
+                        Polyline</button>
                     <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2">Undo
                         Koordinat</button>
                     <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2">Delete
