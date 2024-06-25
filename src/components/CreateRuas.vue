@@ -14,14 +14,14 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Tambah Ruas Jalan</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="/data">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2"><a href="/"
+                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
                             class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
@@ -202,15 +202,19 @@ export default {
                 "SELEMADEG": [-8.4908353, 115.0491421], "BATURITI": [-8.3401193, 115.1504053], "KEDIRI": [-8.571807, 115.1188969],
                 "PUPUAN": [-8.3541709, 114.9957841], "MARGA": [-8.4429303, 115.1794938], "NEGARA": [-8.298738, 114.5979531],
                 "JEMBRANA": [-8.3012707, 114.6673136], "MENDOYO": [-8.2996525, 114.7390452], "PEKUTATAN": [-8.3873785, 114.8566339],
-                "MELAYA": [-8.2274723, 114.5344651], "GEROKAK": [-8.1882967, 114.7639236], "SUKASADA": [-8.2088404, 115.0909638],
+                "MELAYA": [-8.2274723, 114.5344651], "GEROKGAK": [-8.1882967, 114.7639236], "SUKASADA": [-8.2088404, 115.0909638],
                 "TEJAKULA": [-8.1317751, 115.3248397], "SERIRIT": [-8.249942, 114.8922708], "BULELENG": [-8.129198, 115.0836545],
                 "BUSUNG BIU": [-8.3012064, 114.9320468], "SAWAN": [-8.151514, 115.1642467], "KUBUTAMBAHAN": [-8.1574336, 115.21734],
-                "TAMPAKSIRING": [-8.45527, 115.307778],
-                "UBUD": [-8.5123037, 115.2512905],
-                "BLAHBATUH": [-8.5653966, 115.3044604],
-                "GIANYAR": [-8.5197936, 115.3269249],
-                "PAYANGAN": [-8.4026552, 115.2332244],
-            }
+                "TAMPAKSIRING": [-8.45527, 115.307778], "UBUD": [-8.5123037, 115.2512905], "BLAHBATUH": [-8.5653966, 115.3044604],
+                "GIANYAR": [-8.5197936, 115.3269249], "PAYANGAN": [-8.4026552, 115.2332244], "BANJAR": [-8.2188753, 115.0095564],
+                "SUKAWATI": [-8.5823404, 115.2585505], "TEGALLALANG": [-8.3981217, 115.2710165], "SUSUT": [-8.4226661, 115.330208],
+                "BANGLI": [-8.4130735, 115.348215], "TEMBUKU": [-8.414887, 115.376498], "KINTAMANI": [-8.2401583, 115.3239536],
+                "TABANAN": [-8.5229527, 115.0921335], "SELEMADEG TIMUR": [-8.4847379, 115.041563], "SELEMADEG BARAT": [-8.4544564, 114.9445345],
+                "NUSA PENIDA": [-8.7421655, 115.4810546], "BANJARANGKAN": [-8.514859, 115.3520453], "KLUNGKUNG": [-8.5253094, 115.3964945],
+                "DAWAN": [-8.5376968, 115.4196395], "RENDANG": [-8.3775125, 115.3817173], "ABANG": [-8.3775125, 115.3817173],
+                "SIDEMEN": [-8.3775125, 115.3817173], "BEBANDEM": [-8.3775125, 115.3817173], "MANGGIS": [-8.3775125, 115.3817173],
+                "SELAT": [-8.3775125, 115.3817173], "KARANGASEM": [-8.3775125, 115.3817173], "KUBU": [-8.3775125, 115.3817173],
+            },
         }
     },
 

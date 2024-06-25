@@ -5,7 +5,8 @@
                 <h2 class="text-white tx-shadow">Road Tracking - Bali</h2>
                 <span class="text-white tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalu dengan Road
                     Tracking</span>
-                <h2 class="text-white mb-2 mt-4">Register</h2>
+                <div class="line mt-2 shadow-2"></div>
+                <h2 class="text-dark mb-2 mt-4">Register</h2>
                 <form @submit.prevent="register">
                     <div class="mb-3">
                         <label for="name" class="form-label text-dark">Username</label>
@@ -76,7 +77,7 @@ export default {
                     title: 'Registrasi Sukses',
                     text: 'Akun anda telah dibuat, login untuk mengakses web kami'
                 });
-                this.$router.push('/login');
+                this.$router.push('/');
             } catch (error) {
                 console.error(error);
                 Swal.fire({

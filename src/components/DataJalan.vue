@@ -1,5 +1,5 @@
 <template>
-    <div class="background" style="height: 100%">
+    <div class="background min-height" style="height: 100%">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -14,14 +14,14 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/create">Tambah Ruas Jalan</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link active" href="#">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2"><a href="/"
+                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
                             class="d-flex text-white align-items-center">Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
@@ -33,7 +33,7 @@
         </nav>
 
         <div class="dp-flex justify-content-center">
-            <div class="w-20 px-5 pt-3">
+            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
                 <div class="bg-danger p-3 br-1 shadow-1">
                     <p class="text-center fs-4">Rusak</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3">
+            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
                 <div class="bg-warning p-3 br-1 shadow-1">
                     <p class="text-center fs-4">Sedang</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
@@ -51,13 +51,45 @@
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3">
+            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
                 <div class="bg-info p-3 br-1 shadow-1">
                     <p class="text-center fs-4">Bagus</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
                         dataruasjalan.length *
                         100).toFixed(2) }}%)</p>
                 </div>
+            </div>
+
+            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+                <div class="bg-info p-3 br-1 shadow-1">
+                    <p class="text-center fs-4">Desa</p>
+                    <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
+                </div>
+            </div>
+
+            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+                <div class="bg-warning p-3 br-1 shadow-1">
+                    <p class="text-center fs-4">Kabupaten</p>
+                    <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
+                </div>
+            </div>
+
+            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+                <div class="bg-danger p-3 br-1 shadow-1">
+                    <p class="text-center fs-4">Provinsi</p>
+                    <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
+                </div>
+            </div>
+
+            <div class="w-20 px-5 pt-3">
+                <button class="btn btn-primary mt-4 shadow-2 px-4" @click="showJenisJalan">Jenis Jalan</button>
+                <button class="btn btn-success mt-3 shadow-2 px-3" @click="showKondisiJalan">Kondisi Jalan</button>
             </div>
         </div>
 
@@ -125,9 +157,13 @@ export default {
             jenisJalans: [],
             currentPage: 1,
             jumlahKondisiJalan: {},
+            jumlahJenisJalan: {},
             pageSize: 10,
             kondisiData: {},
-            searchQuery: ''
+            searchQuery: '',
+            showJenisJalanData: false,
+            showKondisiJalanData: true,
+            // jumlahJenisJalan: {},
         }
     },
     computed: {
@@ -165,6 +201,14 @@ export default {
         this.fetchJenisJalans();
     },
     methods: {
+        showJenisJalan() {
+            this.showJenisJalanData = true;
+            this.showKondisiJalanData = false;
+        },
+        showKondisiJalan() {
+            this.showJenisJalanData = false;
+            this.showKondisiJalanData = true;
+        },
         async fetchDataJalan() {
             try {
                 const token = localStorage.getItem('token');
@@ -180,6 +224,7 @@ export default {
                     this.dataruasjalan = dataruasjalan;
                     // Hitung jumlah kondisi jalan
                     this.jumlahKondisiJalan = this.countKondisiJalan();
+                    this.jumlahJenisJalan = this.countJenisJalan();
 
                 } else {
                     console.error('Format data tidak valid:', dataruasjalan);
@@ -325,6 +370,24 @@ export default {
             });
 
             return jumlahKondisiJalan;
+        },
+        countJenisJalan() {
+            const jumlahJenisJalan = {
+                Desa: 0,
+                Kabupaten: 0,
+                Provinsi: 0
+            };
+
+            this.dataruasjalan.forEach(jalan => {
+                const jenisJalan = this.jenisJalans.find(j => j.id === jalan.jenisjalan_id);
+                const jenis = jenisJalan ? jenisJalan.jenisjalan : 'Unknown';
+
+                if (jenis === 'Desa') jumlahJenisJalan.Desa++;
+                else if (jenis === 'Kabupaten') jumlahJenisJalan.Kabupaten++;
+                else if (jenis === 'Provinsi') jumlahJenisJalan.Provinsi++;
+            });
+
+            return jumlahJenisJalan;
         },
     }
 }

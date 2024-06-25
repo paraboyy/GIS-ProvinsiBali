@@ -8,7 +8,8 @@
                 <div class="w-50">
                     <h2 class="text-white tx-shadow">Road Tracking - Bali</h2>
                     <span class="text-white tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalu dengan Road Tracking</span>
-                    <h2 class="mb-2 mt-4 fs-4 text-white">Login</h2>
+                    <div class="line mt-2 shadow-2"></div>
+                    <h2 class="mb-2 mt-4 fs-4 text-dark">Login</h2>
                     <form @submit.prevent="login">
                         <div class="mb-3">
                             <label for="email" class="form-label text-dark">Email</label>
