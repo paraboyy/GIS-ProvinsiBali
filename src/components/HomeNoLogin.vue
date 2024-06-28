@@ -21,9 +21,8 @@
                             <a class="nav-link" href="/data">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center"><i
-                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
+                    <button class="btn btn-danger m-2 shadow-2" @click="logout()"><i
+                            class="bi bi-box-arrow-right mx-1"></i>Logout</button>
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -564,6 +563,24 @@ export default {
             this.polylineCoords = [];
             if (this.polyline) {
                 this.map.removeLayer(this.polyline);
+            }
+        },
+        async logout() {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.post(`https://gisapis.manpits.xyz/api/logout`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.$router.push({ name: 'Home2' });
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat logout.",
+                    icon: "error"
+                });
             }
         }
     }

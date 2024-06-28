@@ -21,9 +21,8 @@
                             <a class="nav-link active" href="#">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center"><i
-                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
+                    <!-- <button class="btn btn-danger m-2 shadow-2" @click="logout()"><i
+                            class="bi bi-box-arrow-right mx-1"></i>Logout</button> -->
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -44,8 +43,8 @@
                 <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Jalan Rusak</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -53,8 +52,8 @@
                 <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Jalan Sedang</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -62,8 +61,8 @@
                 <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Jalan Bagus</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -77,8 +76,8 @@
                 <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Desa</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -86,8 +85,8 @@
                 <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Kabupaten</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -95,8 +94,8 @@
                 <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Provinsi</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
-            dataruasjalan.length *
-            100).toFixed(2) }}%)</p>
+                        dataruasjalan.length *
+                        100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -148,7 +147,7 @@
                     <select id="filter-eksisting" v-model="filterEksisting" class="form-select">
                         <option value="">Semua</option>
                         <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.eksisting">{{
-            eksisting.eksisting }}</option>
+                            eksisting.eksisting }}</option>
                     </select>
                 </div>
                 <button class="btn btn-success shadow-2" style="width: 15%;" @click="applyFilter">Terapkan
@@ -562,6 +561,24 @@ export default {
 
             return jumlahJenisJalan;
         },
+        async logout() {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.post(`https://gisapis.manpits.xyz/api/logout`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.$router.push({ name: 'Home2' });
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat logout.",
+                    icon: "error"
+                });
+            }
+        }
     }
 }
 </script>

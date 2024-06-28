@@ -21,9 +21,8 @@
                             <a class="nav-link" href="/data">Data Jalan</a>
                         </li>
                     </ul>
-                    <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center"><i
-                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
+                    <!-- <button class="btn btn-danger m-2 shadow-2" @click="logout()"><i
+                            class="bi bi-box-arrow-right mx-1"></i>Logout</button> -->
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -82,7 +81,7 @@
                                 </select>
                             </div>
                             <div class="dp-flex mb-2">
-                                <div class="form-group w-45 mr-1">
+                                <div class="form-group w-50 mr-1">
                                     <label for="desa">Nama Desa:</label>
                                     <select id="desa" class="form-select shadow-2" v-model="selectedDesa"
                                         @change="onDesaChange">
@@ -92,17 +91,17 @@
                                     </select>
                                 </div>
                                 <div class="form-group w-45">
+                                    <label for="lebar">Lebar Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.lebar" required>
+                                </div>
+                            </div>
+                            <div class="dp-flex mb-2">
+                                <div class="form-group w-65 mr-1">
                                     <label for="nama_ruas">Nama Ruas:</label>
                                     <input type="text" class="form-control shadow-2" v-model="jalanForm.nama_ruas"
                                         required>
                                 </div>
-                            </div>
-                            <div class="dp-flex mb-2">
-                                <div class="form-group w-45 mr-1">
-                                    <label for="lebar">Lebar Ruas:</label>
-                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.lebar" required>
-                                </div>
-                                <div class="form-group w-45">
+                                <div class="form-group w-30">
                                     <label for="kode_ruas">Kode Ruas:</label>
                                     <input type="text" class="form-control shadow-2" v-model="jalanForm.kode_ruas"
                                         required>
@@ -141,7 +140,7 @@
                                 <input type="text" class="form-control shadow-2" v-model="jalanForm.keterangan"
                                     required>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-4 shadow-2">Tambah Jalan</button>
+                            <button type="submit" class="btn-2 hvr-green c-primary mt-4 shadow-2">Tambah Jalan</button>
                         </form>
                     </div>
                 </div>
@@ -593,6 +592,24 @@ export default {
             if (kabupaten && this.kabupatenCoordinates[kabupaten.value]) {
                 const [lat, lng] = this.kabupatenCoordinates[kabupaten.value];
                 this.map.setView([lat, lng], 12);
+            }
+        },
+        async logout() {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.post(`https://gisapis.manpits.xyz/api/logout`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.$router.push({ name: 'Home2' });
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Terjadi kesalahan saat logout.",
+                    icon: "error"
+                });
             }
         },
     }

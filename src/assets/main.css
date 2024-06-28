@@ -167,10 +167,10 @@
 }
 
 .btn-2 {
-    background-color: skyblue;
+    /* background-color: skyblue; */
     border: none;
     border-radius: 0.3rem;
-    padding: 5px 0px;
+    padding: 5px 10px;
 }
 
 .w-200 {
@@ -238,9 +238,6 @@ li a:hover{
     background-color: green;
 }
 
-.text-hover-dark:hover {
-    color: #000;
-}
 
 .shadow-2:hover{
     box-shadow: 
@@ -268,6 +265,23 @@ li a:hover{
     width: 20%;
 }
 
+.w-30 {
+    width: 30%;
+}
+
+.w-65 {
+    width: 65%;
+}
+
+.w-80 {
+    width: 80%;
+}
+
+.w-70 {
+    width: 70%;
+}
+
+
 .ml-2 {
     margin-left: 2rem;
 }
@@ -293,6 +307,16 @@ li a:hover{
     font-size: 24px;
     cursor: pointer;
 }
+
+.c-primary {
+    background-color: rgba(70, 132, 246, 0.892);
+    color: white;
+}
+
+.c-info {
+    background-color: skyblue;
+}
+
 .waiting-page {
     display: flex;
     justify-content: center;
@@ -320,9 +344,6 @@ li a:hover{
     margin-top: 5%;
 }
 
-.card-edit {
-
-}
 
 .card-maps {
     width: 100%;

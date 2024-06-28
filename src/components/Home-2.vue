@@ -21,7 +21,7 @@
                             <input v-model="password" type="password" id="password" class="form-control shadow-2"
                                 required />
                         </div>
-                        <button type="submit" class="hvr-green btn-2 btn-info w-100 text-white shadow-2">Login</button>
+                        <button type="submit" class="hvr-green btn-2 c-info w-100 text-white shadow-2">Login</button>
                         <div class="text-center">
                             <p class="text-white pt-2">Don't have an account? <router-link to="/register"
                                     class="btn-link text-white">Register</router-link></p>

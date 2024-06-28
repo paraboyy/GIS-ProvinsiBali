@@ -1,6 +1,6 @@
 <template>
     <div class="background waiting-page">
-        <div class="p-4">
+        <div class="p-4 dp-flex">
             <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" class="logo">
             <div class="welcome-text">Welcome to GIS Provinsi Bali</div>
         </div>
@@ -15,10 +15,15 @@ export default {
 
 <style scoped>
 
+.logo {
+    animation: fadeIn 3s forwards;
+}
+
 .welcome-text {
-    margin-top: 20px;
+    font-family: Chalkboard SE;
+    margin-top: 40px;
     color: rgb(0, 191, 255);
-    font-size: 24px;
+    font-size: 40px;
     opacity: 0;
     animation: fadeIn 3s forwards;
 }
