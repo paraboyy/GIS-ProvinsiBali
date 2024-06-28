@@ -1,7 +1,8 @@
 .background {
   background-image: url('https://www.denpasarkota.go.id/public/uploads/Background_221903010352_pemerintah-kota-denpasar.jpg');
-  background-size: cover; /* Untuk menyesuaikan ukuran latar belakang dengan jendela browser */
-  background-repeat: no-repeat; /* Untuk mencegah pengulangan gambar */
+  background-size: cover; /* Cover the whole area */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Prevent background image repetition */
 }
 
 .min-height {
@@ -14,25 +15,11 @@
     -webkit-backdrop-filter: blur(10px);
     border-radius: 10px;
     border: 2px solid rgba(0, 0, 0, 0.3);
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-.effect-danger {
-  text-align: center;
-  display: inline-block;
-  position: relative;
-  text-decoration: none;
-  color: #fff;
-  text-transform: capitalize;
-  background-color: red;
-  padding: 7px 9px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: none;
-}
 
+.effect-danger,
 .effect-success {
   text-align: center;
   display: inline-block;
@@ -40,73 +27,55 @@
   text-decoration: none;
   color: #fff;
   text-transform: capitalize;
-  background-color: green;
   padding: 7px 9px;
   border-radius: 6px;
   overflow: hidden;
   border: none;
+  transition: all 0.2s linear;
 }
 
-.effect-danger.effect-5 {
-  transition: all 0.2s linear 0s;
+.effect-danger {
+  background-color: red;
 }
 
-.effect-success.effect-5 {
-  transition: all 0.2s linear 0s;
+.effect-success {
+  background-color: green;
+}
+
+.effect-danger.effect-5:before,
+.effect-success.effect-5:before {
+  content: " ";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0 50% 50% 0;
+  transform: scale(0, 1);
+  transform-origin: left center;
+  transition: all 0.2s linear;
 }
 
 .effect-danger.effect-5:before {
   content: "➤";
-  font-family: FontAwesome;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0px;
-  height: 100%;
-  width: 30px;
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 0 50% 50% 0;
-  transform: scale(0, 1);
-  transform-origin: left center;
-  transition: all 0.2s linear 0s;
 }
 
 .effect-success.effect-5:before {
   content: "✎";
-  font-family: FontAwesome;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0px;
-  height: 100%;
-  width: 30px;
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 0 50% 50% 0;
-  transform: scale(0, 1);
-  transform-origin: left center;
-  transition: all 0.2s linear 0s;
 }
 
-.effect-danger.effect-5:hover {
-  text-indent: 30px;
-}
-
+.effect-danger.effect-5:hover,
 .effect-success.effect-5:hover {
   text-indent: 30px;
 }
 
-.effect-danger.effect-5:hover:before {
-  transform: scale(1, 1);
-  text-indent: 0;
-}
-
+.effect-danger.effect-5:hover:before,
 .effect-success.effect-5:hover:before {
   transform: scale(1, 1);
-  text-indent: 0;
 }
 
 .br-1 {
@@ -167,7 +136,6 @@
 }
 
 .btn-2 {
-    /* background-color: skyblue; */
     border: none;
     border-radius: 0.3rem;
     padding: 5px 10px;
@@ -211,25 +179,25 @@ li a {
     border-bottom: 2px solid #000;
 }
 
-li a:hover{
+li a:hover {
     top: -0.16em;
     transition: padding .5s, top .35s, box-shadow .4s;
     box-shadow: 0 0.4rem 0 -0.2rem orange;
 }
 
-.shadow-1{
+.shadow-1 {
     box-shadow: 
         inset 5px 5px 15px rgba(0, 0, 0, 0.3),
         10px 10px 15px rgba(0, 0, 0, 0.3);
 }
 
-.shadow-3{
+.shadow-3 {
     box-shadow: 
         inset 5px 5px 15px rgba(0, 0, 0, 0.3),
         inset -5px -5px 15px rgba(0, 0, 0, 0.3);
 }
 
-.shadow-2{
+.shadow-2 {
     box-shadow: 
         5px 5px 10px rgba(0, 0, 0, 0.3);
 }
@@ -238,8 +206,7 @@ li a:hover{
     background-color: green;
 }
 
-
-.shadow-2:hover{
+.shadow-2:hover {
     box-shadow: 
         0px 0px 5px rgba(0, 0, 0, 0.3);
 }
@@ -248,7 +215,7 @@ li a:hover{
     position: fixed;
 }
 
-.shadow-4{
+.shadow-4 {
     box-shadow: 
         0px 0px 10px rgba(0, 0, 0, 0.3);
 }
@@ -273,14 +240,9 @@ li a:hover{
     width: 65%;
 }
 
-.w-80 {
-    width: 80%;
-}
-
 .w-70 {
     width: 70%;
 }
-
 
 .ml-2 {
     margin-left: 2rem;
@@ -344,7 +306,6 @@ li a:hover{
     margin-top: 5%;
 }
 
-
 .card-maps {
     width: 100%;
     height: 100%;
@@ -367,12 +328,12 @@ li a:hover{
     background-color: #000000;
     color: white;
     border-radius: 1rem;
-    padding: 1% 2% 1% 2%;
-    margin: 0% 2% 0% 2%;
+    padding: 1% 2%;
+    margin: 0 2%;
 }
 
 .pagination span {
-    padding: 1% 0% 1% 0%;
+    padding: 1% 0;
 }
 
 .line {
@@ -391,6 +352,7 @@ li a:hover{
     color: black;
     text-align: center;
 }
+
 .label-text {
     background: white;
     padding: 2px 4px;
@@ -402,11 +364,68 @@ li a:hover{
     0% {
         opacity: 1;
         width: 100%;
-        height: calc(100vh - var(48px));
+        height: calc(100vh - 48px);
     }
     100% {
         opacity: 0;
         width: 0;
         height: 0;
+    }
+}
+
+/* Media Queries */
+@media only screen and (max-width: 768px) {
+    .w-200 {
+        width: 100%;
+    }
+
+    .logo {
+        margin-left: 0;
+        max-width: 150px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-width: 350px;
+    }
+
+    .btn-2 {
+        padding: 5px 8px;
+    }
+
+    .pagination button {
+        padding: 1% 5%;
+    }
+
+    .logo-container {
+        text-align: left;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .w-200 {
+        width: 100%;
+    }
+
+    .logo {
+        margin-left: 0;
+        max-width: 100px;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-width: 300px;
+    }
+
+    .btn-2 {
+        padding: 4px 6px;
+    }
+
+    .pagination button {
+        padding: 1% 10%;
+    }
+
+    .logo-container {
+        text-align: left;
     }
 }

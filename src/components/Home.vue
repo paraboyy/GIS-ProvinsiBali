@@ -511,6 +511,7 @@ export default {
                                     // Hapus marker jika zoom tidak berada dalam rentang yang ditentukan
                                     if (this.map.hasLayer(labelMarker)) {
                                         this.map.removeLayer(labelMarker);
+                                        console.log('hapus label');
                                     }
                                 }
                             });
