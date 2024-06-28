@@ -22,7 +22,8 @@
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center">Logout</a></button>
+                            class="d-flex text-white align-items-center"><i
+                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -32,58 +33,70 @@
             </div>
         </nav>
 
-        <div class="dp-flex justify-content-center">
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
+        <div v-if="showPersentaseDialog" class="dialog-filter dp-flex p-5 justify-content-center">
+            <div class="w-20 px-2 mt-2 pt-3" v-if="showKondisiJalanData">
+                <div class="bg-light p-3 br-1 shadow-1 b-2w">
+                    <p class="text-start fs-4">Persentase Kondisi Jalan</p>
+                </div>
+            </div>
+
+            <div class="w-20 px-2 pt-3 dialog-filter" v-if="showKondisiJalanData">
                 <div class="bg-danger p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Rusak</p>
+                    <p class="text-center fs-4">Jalan Rusak</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
+            <div class="w-20 px-2 pt-3" v-if="showKondisiJalanData">
                 <div class="bg-warning p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Sedang</p>
+                    <p class="text-center fs-4">Jalan Sedang</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
+            <div class="w-20 px-2 pt-3" v-if="showKondisiJalanData">
                 <div class="bg-info p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Bagus</p>
+                    <p class="text-center fs-4">Jalan Bagus</p>
                     <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+            <div class="w-20 px-2 mt-2 pt-3" v-if="showJenisJalanData">
+                <div class="bg-light p-3 br-1 shadow-1 b-2w">
+                    <p class="text-start fs-4">Persentase Jenis Jalan</p>
+                </div>
+            </div>
+
+            <div class="w-20 px-2 pt-3" v-if="showJenisJalanData">
                 <div class="bg-info p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Desa</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+            <div class="w-20 px-2 pt-3" v-if="showJenisJalanData">
                 <div class="bg-warning p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Kabupaten</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
+            <div class="w-20 px-2 pt-3" v-if="showJenisJalanData">
                 <div class="bg-danger p-3 br-1 shadow-1 b-2w">
                     <p class="text-center fs-4">Provinsi</p>
                     <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+            dataruasjalan.length *
+            100).toFixed(2) }}%)</p>
                 </div>
             </div>
 
@@ -94,16 +107,64 @@
         </div>
 
         <div class="mt-5 mx-5 p-4 shadow-3 bg-light mb-2 br-1">
-            <input type="text" v-model="searchQuery"
-                placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
-                class="form-control">
+            <div class="dp-flex">
+                <input type="text" v-model="searchQuery"
+                    placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
+                    class="form-control">
+                <button class="btn btn-warning ms-3 shadow-2" @click="togglePersentaseDialog">Munculkan Data
+                    Persentase</button>
+                <button class="btn btn-info ms-3 shadow-2" @click="toggleFilterDialog">Filter</button>
+            </div>
+
+            <div v-if="showFilterDialog" class="filter-dialog p-3 mb-4 mt-4 bg-light shadow-2 br-1 row">
+                <h5>Filter Data</h5>
+                <div class="mb-2 w-50">
+                    <label for="filter-kondisi">Kondisi Jalan:</label>
+                    <select id="filter-kondisi" v-model="filterKondisi" class="form-select">
+                        <option value="">Semua</option>
+                        <option value="Rusak">Rusak</option>
+                        <option value="Baik">Baik</option>
+                        <option value="Sedang">Sedang</option>
+                    </select>
+                </div>
+                <div class="mb-2 w-50">
+                    <label for="filter-jenis">Jenis Jalan:</label>
+                    <select id="filter-jenis" v-model="filterJenis" class="form-select">
+                        <option value="">Semua</option>
+                        <option value="Desa">Desa</option>
+                        <option value="Kabupaten">Kabupaten</option>
+                        <option value="Provinsi">Provinsi</option>
+                    </select>
+                </div>
+                <div class="mb-2 w-50">
+                    <label for="filter-desa">Desa:</label>
+                    <select id="filter-desa" v-model="filterDesa" class="form-select">
+                        <option value="">Semua</option>
+                        <option v-for="desa in desas" :key="desa.id" :value="desa.desa">{{ desa.desa }}</option>
+                    </select>
+                </div>
+                <div class="mb-2 w-50">
+                    <label for="filter-eksisting">Eksisting:</label>
+                    <select id="filter-eksisting" v-model="filterEksisting" class="form-select">
+                        <option value="">Semua</option>
+                        <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.eksisting">{{
+            eksisting.eksisting }}</option>
+                    </select>
+                </div>
+                <button class="btn btn-success shadow-2" style="width: 15%;" @click="applyFilter">Terapkan
+                    Filter</button>
+                <button class="btn btn-danger ms-2 shadow-2" style="width: 15%;" @click="resetFilter">Reset</button>
+            </div>
         </div>
+
         <div class="mt-2 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
             <div v-if="filteredData.length">
                 <table class="table table-hover table-bordered">
                     <thead class="table-primary">
                         <tr>
                             <th scope="col">No</th>
+                            <!-- <th scope="col">Nama Kabupaten</th> -->
+                            <!-- <th scope="col">Nama Kecamatan</th> -->
                             <th scope="col">Nama Desa</th>
                             <th scope="col">Nama Ruas</th>
                             <th scope="col">Panjang Jalan</th>
@@ -116,8 +177,10 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="jalan in paginatedData" :key="jalan.id">
-                            <td>{{ nomor + 1 }}</td>
+                        <tr v-for="(jalan, index) in paginatedData" :key="jalan.id">
+                            <td>{{ index + 1 }}</td>
+                            <!-- <td>{{ getNamaKabupaten(jalan.kabupaten_id) }}</td> -->
+                            <!-- <td>{{ getNamaKecamatan(jalan.desa_id) }}</td> -->
                             <td>{{ getNamaDesa(jalan.desa_id) }}</td>
                             <td>{{ jalan.nama_ruas }}</td>
                             <td>{{ Math.floor(jalan.panjang) }} M</td>
@@ -153,6 +216,7 @@ export default {
     data() {
         return {
             nomor: 1,
+            datas: '',
             dataruasjalan: [],
             desas: [],
             eksistings: [],
@@ -166,26 +230,65 @@ export default {
             searchQuery: '',
             showJenisJalanData: false,
             showKondisiJalanData: true,
-            // jumlahJenisJalan: {},
+            showFilterDialog: false,
+            showPersentaseDialog: false,
+            filterKondisi: '',
+            filterJenis: '',
+            filterDesa: '',
+            filterEksisting: '',
+            kecamatans: [],
+            filterKecamatan: '',
+            kabupatens: [],
         }
     },
     computed: {
         filteredData() {
-            if (!this.searchQuery) return this.dataruasjalan;
-            return this.dataruasjalan.filter(jalan => {
-                const namaRuas = jalan.nama_ruas.toLowerCase();
-                const eksisting = this.getNamaEksisting(jalan.eksisting_id).toLowerCase();
-                const kondisi = this.getNamaKondisi(jalan.kondisi_id).toLowerCase();
-                const jenisJalan = this.getNamaJenisJalan(jalan.jenisjalan_id).toLowerCase();
-                const query = this.searchQuery.toLowerCase();
+            let filtered = this.dataruasjalan;
 
-                return (
-                    namaRuas.includes(query) ||
-                    eksisting.includes(query) ||
-                    kondisi.includes(query) ||
-                    jenisJalan.includes(query)
-                );
-            });
+            if (this.searchQuery) {
+                const query = this.searchQuery.toLowerCase();
+                filtered = filtered.filter(jalan => {
+                    const namaRuas = jalan.nama_ruas.toLowerCase();
+                    const eksisting = this.getNamaEksisting(jalan.eksisting_id).toLowerCase();
+                    const kondisi = this.getNamaKondisi(jalan.kondisi_id).toLowerCase();
+                    const jenisJalan = this.getNamaJenisJalan(jalan.jenisjalan_id).toLowerCase();
+                    const namaDesa = this.getNamaDesa(jalan.desa_id).toLowerCase();
+                    const namaKabupaten = this.getNamaKabupaten(jalan.kabupaten_id).toLowerCase();
+                    const namaKecamatan = this.getNamaKecamatanFilter(jalan.kecamatan_id).toLowerCase();
+
+                    return (
+                        namaRuas.includes(query) ||
+                        eksisting.includes(query) ||
+                        kondisi.includes(query) ||
+                        jenisJalan.includes(query) ||
+                        namaDesa.includes(query) ||
+                        namaKabupaten.includes(query) ||
+                        namaKecamatan.includes(query)
+                    );
+                });
+            }
+
+            if (this.filterKondisi) {
+                filtered = filtered.filter(jalan => this.getNamaKondisi(jalan.kondisi_id) === this.filterKondisi);
+            }
+
+            if (this.filterJenis) {
+                filtered = filtered.filter(jalan => this.getNamaJenisJalan(jalan.jenisjalan_id) === this.filterJenis);
+            }
+
+            if (this.filterDesa) {
+                filtered = filtered.filter(jalan => this.getNamaDesa(jalan.desa_id) === this.filterDesa);
+            }
+
+            if (this.filterEksisting) {
+                filtered = filtered.filter(jalan => this.getNamaEksisting(jalan.eksisting_id) === this.filterEksisting);
+            }
+
+            if (this.filterKecamatan) {
+                filtered = filtered.filter(jalan => this.getNamaKecamatanFilter(jalan.kecamatan_id) === this.filterKecamatan);
+            }
+
+            return filtered;
         },
         paginatedData() {
             const start = (this.currentPage - 1) * this.pageSize;
@@ -202,8 +305,75 @@ export default {
         this.fetchEksistings();
         this.fetchKondisis();
         this.fetchJenisJalans();
+        this.fetchKabupatens();
     },
     methods: {
+        async fetchKabupatens() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.kabupatens = response.data.kabupaten;
+                this.kecamatans = response.data.kecamatan;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchKecamatanByDesaId(desaId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatanbydesaid/${desaId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                return response.data.kecamatan.kecamatan;
+            } catch (error) {
+                console.error('Gagal mengambil data kecamatan berdasarkan desa', error);
+                throw error;
+            }
+        },
+        getNamaKabupaten(id) {
+            const kabupaten = this.kabupatens.find(k => k.id === id);
+            return kabupaten ? kabupaten.kabupaten : 'Tidak ditemukan';
+        },
+        async getNamaKecamatan(desaId) {
+            try {
+                const kecamatan = await this.fetchKecamatanByDesaId(desaId);
+                const dataKecamatan = this.kecamatans.find(k => k.kecamatan === kecamatan);
+                console.log('Data:', kecamatan);
+                console.log('Data:', dataKecamatan);
+                return dataKecamatan ? dataKecamatan : 'Tidak ditemukan';
+            } catch (error) {
+                console.error('Error fetching kecamatan:', error);
+                return 'Error';
+            }
+        },
+        getNamaKecamatanFilter(id) {
+            const kecamatan = this.kecamatans.find(k => k.id === id);
+            return kecamatan ? kecamatan.kecamatan : 'Tidak ditemukan';
+        },
+        toggleFilterDialog() {
+            this.showFilterDialog = !this.showFilterDialog;
+        },
+        togglePersentaseDialog() {
+            this.showPersentaseDialog = !this.showPersentaseDialog;
+        },
+        applyFilter() {
+            this.currentPage = 1; // Reset to the first page
+            this.showFilterDialog = false;
+        },
+        resetFilter() {
+            this.filterKondisi = '';
+            this.filterJenis = '';
+            this.filterDesa = '';
+            this.filterEksisting = '';
+            this.searchQuery = '';
+            this.currentPage = 1;
+        },
         showJenisJalan() {
             this.showJenisJalanData = true;
             this.showKondisiJalanData = false;

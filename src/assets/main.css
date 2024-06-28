@@ -19,6 +19,95 @@
     padding-right: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.effect-danger {
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  text-transform: capitalize;
+  background-color: red;
+  padding: 7px 9px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: none;
+}
+
+.effect-success {
+  text-align: center;
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: #fff;
+  text-transform: capitalize;
+  background-color: green;
+  padding: 7px 9px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: none;
+}
+
+.effect-danger.effect-5 {
+  transition: all 0.2s linear 0s;
+}
+
+.effect-success.effect-5 {
+  transition: all 0.2s linear 0s;
+}
+
+.effect-danger.effect-5:before {
+  content: "➤";
+  font-family: FontAwesome;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0 50% 50% 0;
+  transform: scale(0, 1);
+  transform-origin: left center;
+  transition: all 0.2s linear 0s;
+}
+
+.effect-success.effect-5:before {
+  content: "✎";
+  font-family: FontAwesome;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0px;
+  height: 100%;
+  width: 30px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 0 50% 50% 0;
+  transform: scale(0, 1);
+  transform-origin: left center;
+  transition: all 0.2s linear 0s;
+}
+
+.effect-danger.effect-5:hover {
+  text-indent: 30px;
+}
+
+.effect-success.effect-5:hover {
+  text-indent: 30px;
+}
+
+.effect-danger.effect-5:hover:before {
+  transform: scale(1, 1);
+  text-indent: 0;
+}
+
+.effect-success.effect-5:hover:before {
+  transform: scale(1, 1);
+  text-indent: 0;
+}
 
 .br-1 {
     border-radius: 1rem;
@@ -77,6 +166,13 @@
     text-decoration: none;
 }
 
+.btn-2 {
+    background-color: skyblue;
+    border: none;
+    border-radius: 0.3rem;
+    padding: 5px 0px;
+}
+
 .w-200 {
     width: 200%;
 }
@@ -85,12 +181,40 @@
     height: 100%;
 }
 
+.active:hover {
+    color: yellow;
+}
+
+.dialog-filter, .dp-flex {
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
 .w-45 {
     width: 45%;
 }
 
 .w-80 {
     width: 80%;
+}
+
+.w-15 {
+    width: 15%;
+}
+
+li a {
+    text-decoration: none;
+    text-transform: capitalize;
+    font-family: Kalam, Arial;
+    margin-right: 1em;
+    color: black;
+    position: relative;
+    border-bottom: 2px solid #000;
+}
+
+li a:hover{
+    top: -0.16em;
+    transition: padding .5s, top .35s, box-shadow .4s;
+    box-shadow: 0 0.4rem 0 -0.2rem orange;
 }
 
 .shadow-1{
@@ -108,6 +232,14 @@
 .shadow-2{
     box-shadow: 
         5px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hvr-green:hover {
+    background-color: green;
+}
+
+.text-hover-dark:hover {
+    color: #000;
 }
 
 .shadow-2:hover{

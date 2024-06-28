@@ -18,7 +18,7 @@
                         </div>
                         <div class="mb-3 w-45">
                             <label for="editNamaKabupaten" class="form-label">Nama Kabupaten</label>
-                            <select class="form-control shadow-2" id="editNamaKabupaten" v-model="selectedKabupaten"
+                            <select class="form-select shadow-2" id="editNamaKabupaten" v-model="selectedKabupaten"
                                 @change="fetchKecamatanByKabupatenId">
                                 <option v-for="(name, id) in kabupatenData" :value="id">{{ name }}</option>
                             </select>
@@ -27,14 +27,14 @@
                     <div class="dp-flex">
                         <div class="mb-3 w-45 mr-2">
                             <label for="editNamaKecamatan" class="form-label">Nama Kecamatan</label>
-                            <select class="form-control shadow-2" id="editNamaKecamatan" v-model="selectedKecamatan"
+                            <select class="form-select shadow-2" id="editNamaKecamatan" v-model="selectedKecamatan"
                                 @change="fetchDesaByKecamatanId">
                                 <option v-for="(name, id) in kecamatanData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                         <div class="mb-3 w-45">
                             <label for="editNamaDesa" class="form-label">Nama Desa</label>
-                            <select class="form-control shadow-2" id="editNamaDesa" v-model="jalan.desa_id">
+                            <select class="form-select shadow-2" id="editNamaDesa" v-model="jalan.desa_id">
                                 <option v-for="(name, id) in desaData" :value="id">{{ name }}</option>
                             </select>
                         </div>
@@ -54,19 +54,19 @@
                     <div class="dp-flex">
                         <div class="mb-3 mr-1">
                             <label for="editKondisi" class="form-label">Kondisi</label>
-                            <select class="form-control shadow-2" id="editKondisi" v-model="jalan.kondisi_id">
+                            <select class="form-select shadow-2" id="editKondisi" v-model="jalan.kondisi_id">
                                 <option v-for="(name, id) in kondisiData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                         <div class="mb-3 mr-1">
                             <label for="editEksisting" class="form-label">Eksisting</label>
-                            <select class="form-control shadow-2" id="editEksisting" v-model="jalan.eksisting_id">
+                            <select class="form-select shadow-2" id="editEksisting" v-model="jalan.eksisting_id">
                                 <option v-for="(name, id) in eksistingData" :value="id">{{ name }}</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="editJenisJalan" class="form-label">Jenis Jalan</label>
-                            <select class="form-control shadow-2" id="editJenisJalan" v-model="jalan.jenisjalan_id">
+                            <select class="form-select shadow-2" id="editJenisJalan" v-model="jalan.jenisjalan_id">
                                 <option v-for="(name, id) in jenisJalanData" :value="id">{{ name }}</option>
                             </select>
                         </div>
@@ -75,8 +75,8 @@
                         <label for="keterangan" class="form-label">Keterangan</label>
                         <textarea class="form-control shadow-2" id="keterangan" v-model="jalan.keterangan"></textarea>
                     </div>
-                    <button type="submit" class="shadow-2 btn btn-primary mx-2">Update</button>
-                    <button class="btn btn-danger shadow-2" @click="back">Kembali</button>
+                    <button type="submit" class="shadow-2 effect-success effect-5 mx-2">Update</button>
+                    <button class="effect-danger effect-5 shadow-2" @click="back">Kembali</button>
                 </form>
             </div>
         </div>
@@ -115,6 +115,7 @@ export default {
             kabupatenData: {},
             selectedKabupaten: null,
             selectedKecamatan: null,
+            isDataDisplayed: false,
         };
     },
     created() {
@@ -131,9 +132,12 @@ export default {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(this.map);
 
-        this.map.on('click', this.onMapClick);
+        if (!this.isDataDisplayed) {
+            this.displayDataOnMap();
+            this.isDataDisplayed = true; 
+        }
 
-        this.displayDataOnMap();
+        this.map.on('click', this.onMapClick);
     },
     methods: {
         async fetchRuasJalan() {
@@ -151,10 +155,14 @@ export default {
                     await this.fetchKecamatanByDesaId(this.jalan.desa_id);
                 }
 
+                if (this.polyline) {
+                    this.map.removeLayer(this.polyline);
+                }
+
                 if (this.jalan.paths) {
                     this.polylineCoords = JSON.parse(this.decompressCoordinate(this.jalan.paths));
                     this.polyline = L.polyline(this.polylineCoords, { color: 'darkblue', draggable: true }).addTo(this.map);
-                    this.polyline.on('dragend', this.onPolylineDragEnd);
+                    // this.polyline.on('dragend', this.onPolylineDragEnd);
 
                     this.map.fitBounds(this.polyline.getBounds());
                 }
@@ -240,9 +248,13 @@ export default {
                     return;
                 }
 
-                const polyline = L.polyline(coordinates, { color: 'darkblue', draggable: true }).addTo(this.map);
-                polyline.on('dragend', this.onPolylineDragEnd);
-                this.polylines.push(polyline);
+                if (this.polyline) {
+                    this.map.removeLayer(this.polyline);
+                }
+
+                this.polyline = L.polyline(coordinates, { color: 'darkblue', draggable: true }).addTo(this.map);
+                // polyline.on('dragend', this.onPolylineDragEnd);
+                this.polyline.push(polyline);
 
                 this.map.fitBounds(polyline.getBounds());
             } catch (error) {
@@ -269,9 +281,9 @@ export default {
             return btoa(String.fromCharCode.apply(null, new Uint8Array(compressed)));
         },
         clearPolylines() {
-            this.polylines.forEach(polyline => {
-                this.map.removeLayer(polyline);
-            });
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
             this.polylines = [];
             this.polylineCoords = [];
             this.polyline = null;
@@ -284,7 +296,7 @@ export default {
             }
 
             this.polyline = L.polyline(this.polylineCoords, { color: 'red', draggable: true }).addTo(this.map);
-            this.polyline.on('dragend', this.onPolylineDragEnd);
+            // this.polyline.on('dragend', this.onPolylineDragEnd);
 
             this.jalan.panjang = this.calculatePolylineLength(this.polylineCoords);
             this.polylineString = JSON.stringify(this.polylineCoords);
@@ -373,7 +385,7 @@ export default {
                     this.kecamatanData[item.id] = item.value;
                 });
 
-                this.selectedKecamatan = null;
+                // this.selectedKecamatan = null;
                 this.desaData = {};
             } catch (error) {
                 console.error('Gagal mengambil data kecamatan berdasarkan kabupaten', error);

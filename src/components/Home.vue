@@ -22,7 +22,8 @@
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center">Logout</a></button>
+                            class="d-flex text-white align-items-center"><i
+                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
                 </div>
                 <div class="dropdown mx-3">
                     <button class="btn btn-primary dropdown-toggle shadow-2" type="button" id="dropdownKondisi"
@@ -103,9 +104,10 @@
                         <option v-for="desa in desas" :key="desa.id" :value="desa.id">{{ desa.value }}</option>
                     </select>
                 </div>
-                <div class="form-group mt-2">
-                    <input type="text" class="form-control me-2" placeholder="Cari ruas" v-model="searchQuery">
-                    <button class="btn btn-outline-success mt-2" @click="searchByName">Cari</button>
+                <div class="form-group mt-2 dp-flex">
+                    <input type="text" class="form-control mt-2 me-2" placeholder="Cari ruas" v-model="searchQuery">
+                    <button class="btn btn-outline-success mt-2 shadow-2" @click="searchByName"><i
+                            class="bi bi-search"></i></button>
                 </div>
             </div>
         </div>
@@ -184,7 +186,7 @@ export default {
     },
     mounted() {
         // Inisialisasi peta Leaflet
-        this.map = L.map(this.$refs.map).setView([-8.4422091, 115.1723953], 10);
+        this.map = L.map(this.$refs.map).setView([-8.7230716, 115.1920748], 12);
 
         // Menambahkan layer peta OpenStreetMap
         this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -475,7 +477,7 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             const jenisJalan = this.jenisJalanData[jalan.jenisjalan_id];
-                            let color = 'blue';
+                            let color = 'darkblue';
                             if (jenisJalan === 'Desa') {
                                 color = 'blue';
                             } else if (jenisJalan === 'Kabupaten') {
@@ -489,13 +491,29 @@ export default {
                             // Gambar label kode ruas di atas polyline
                             const midPointIndex = Math.floor(JSON.parse(decompressedPolyline).length / 2);
                             const midPoint = JSON.parse(decompressedPolyline)[midPointIndex];
-                            const labelMarker = L.marker(midPoint, {
-                                icon: L.divIcon({
-                                    className: 'label-icon',
-                                    html: `<span class="label-text">${jalan.kode_ruas}</span>`,
-                                    iconSize: [100, 40] // Sesuaikan ukuran ikon label
-                                })
-                            }).addTo(this.map);
+
+                            const minZoomToShowLabel = 12;
+                            const maxZoomToShowLabel = 19;
+
+                            // Gunakan event pada peta untuk mengatur visibilitas marker berdasarkan zoom level
+                            this.map.on('zoomend', () => {
+                                const currentZoom = this.map.getZoom();
+
+                                if (currentZoom >= minZoomToShowLabel && currentZoom <= maxZoomToShowLabel) {
+                                    const labelMarker = L.marker(midPoint, {
+                                        icon: L.divIcon({
+                                            className: 'label-icon',
+                                            html: `<span class="label-text">${jalan.kode_ruas}</span>`,
+                                            iconSize: [100, 40]
+                                        })
+                                    }).addTo(this.map);
+                                } else {
+                                    // Hapus marker jika zoom tidak berada dalam rentang yang ditentukan
+                                    if (this.map.hasLayer(labelMarker)) {
+                                        this.map.removeLayer(labelMarker);
+                                    }
+                                }
+                            });
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
                             // this.displayDataOnMap();

@@ -1,5 +1,5 @@
 <template>
-    <div class="background min-height" style="height: 100%">
+    <div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -12,17 +12,18 @@
                             <a class="nav-link" aria-current="page" href="/homelogin">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/create">Tambah Ruas Jalan</a>
+                            <a class="nav-link active" href="#">Tambah Ruas Jalan</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Data Jalan</a>
+                            <a class="nav-link" href="/data">Data Jalan</a>
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center">Logout</a></button>
+                            class="d-flex text-white align-items-center"><i
+                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -32,156 +33,117 @@
             </div>
         </nav>
 
-        <div class="dp-flex justify-content-center">
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Rusak</p>
-                    <p class="text-center fs-5">{{ jumlahKondisiJalan.Rusak }} ({{ (jumlahKondisiJalan.Rusak /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
+        <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
+            <div class=" card shadow mx-2" style="width: 100%;">
+                <div class="row justify-content-center">
+                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-pencil-fill mx-2"></i>Edit
+                        Polyline</button>
+                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-arrow-counterclockwise mx-2"></i>Undo
+                        Koordinat</button>
+                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-trash-fill mx-2"></i>Delete
+                        Koordinat</button>
+                </div>
+                <div class="card-body">
+                    <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
                 </div>
             </div>
-
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Sedang</p>
-                    <p class="text-center fs-5">{{ jumlahKondisiJalan.Sedang }} ({{ (jumlahKondisiJalan.Sedang /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
-                </div>
-            </div>
-
-            <div class="w-20 px-5 pt-3" v-if="showKondisiJalanData">
-                <div class="bg-info p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Bagus</p>
-                    <p class="text-center fs-5">{{ jumlahKondisiJalan.Bagus }} ({{ (jumlahKondisiJalan.Bagus /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
-                </div>
-            </div>
-
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-info p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Desa</p>
-                    <p class="text-center fs-5">{{ jumlahJenisJalan.Desa }} ({{ (jumlahJenisJalan.Desa /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
-                </div>
-            </div>
-
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-warning p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Kabupaten</p>
-                    <p class="text-center fs-5">{{ jumlahJenisJalan.Kabupaten }} ({{ (jumlahJenisJalan.Kabupaten /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
-                </div>
-            </div>
-
-            <div class="w-20 px-5 pt-3" v-if="showJenisJalanData">
-                <div class="bg-danger p-3 br-1 shadow-1 b-2w">
-                    <p class="text-center fs-4">Provinsi</p>
-                    <p class="text-center fs-5">{{ jumlahJenisJalan.Provinsi }} ({{ (jumlahJenisJalan.Provinsi /
-                        dataruasjalan.length *
-                        100).toFixed(2) }}%)</p>
-                </div>
-            </div>
-
-            <div class="w-20 px-5 pt-3">
-                <button class="btn btn-primary mt-4 shadow-2 px-4" @click="showJenisJalan">Jenis Jalan</button>
-                <button class="btn btn-success mt-3 shadow-2 px-3" @click="showKondisiJalan">Kondisi Jalan</button>
-            </div>
-        </div>
-
-        <div class="mt-5 mx-5 p-4 shadow-3 bg-light mb-2 br-1">
-            <div class="dp-flex">
-                <input type="text" v-model="searchQuery"
-                    placeholder="Cari berdasarkan Nama Ruas, Eksisting, Kondisi Jalan, atau Jenis Jalan"
-                    class="form-control w-80">
-                <button class="btn btn-info ms-3 shadow-2" @click="toggleFilterDialog">Filter</button>
-            </div>
-
-            <div v-if="showFilterDialog" class="filter-dialog p-3 mb-4 mt-4 bg-light shadow-2 br-1">
-                <h5>Filter Data</h5>
-                <div class="mb-2">
-                    <label for="filter-kondisi">Kondisi Jalan:</label>
-                    <select id="filter-kondisi" v-model="filterKondisi" class="form-control">
-                        <option value="">Semua</option>
-                        <option value="Rusak">Rusak</option>
-                        <option value="Baik">Baik</option>
-                        <option value="Sedang">Sedang</option>
-                    </select>
-                </div>
-                <div class="mb-2">
-                    <label for="filter-jenis">Jenis Jalan:</label>
-                    <select id="filter-jenis" v-model="filterJenis" class="form-control">
-                        <option value="">Semua</option>
-                        <option value="Desa">Desa</option>
-                        <option value="Kabupaten">Kabupaten</option>
-                        <option value="Provinsi">Provinsi</option>
-                    </select>
-                </div>
-                <div class="mb-2">
-                    <label for="filter-desa">Desa:</label>
-                    <select id="filter-desa" v-model="filterDesa" class="form-control">
-                        <option value="">Semua</option>
-                        <option v-for="desa in desas" :key="desa.id" :value="desa.desa">{{ desa.desa }}</option>
-                    </select>
-                </div>
-                <div class="mb-2">
-                    <label for="filter-eksisting">Eksisting:</label>
-                    <select id="filter-eksisting" v-model="filterEksisting" class="form-control">
-                        <option value="">Semua</option>
-                        <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.eksisting">{{
-                eksisting.eksisting }}</option>
-                    </select>
-                </div>
-                <button class="btn btn-success shadow-2" @click="applyFilter">Terapkan Filter</button>
-                <button class="btn btn-danger ms-2 shadow-2" @click="resetFilter">Reset</button>
-            </div>
-        </div>
-
-        <div class="mt-2 mx-5 p-5 shadow-3 bg-light mb-5 br-1">
-            <div v-if="filteredData.length">
-                <table class="table table-hover table-bordered">
-                    <thead class="table-primary">
-                        <tr>
-                            <th scope="col">No</th>
-                            <th scope="col">Nama Desa</th>
-                            <th scope="col">Nama Ruas</th>
-                            <th scope="col">Panjang Jalan</th>
-                            <th scope="col">Lebar Jalan</th>
-                            <th scope="col">Eksisting</th>
-                            <th scope="col">Kondisi Jalan</th>
-                            <th scope="col">Jenis Jalan</th>
-                            <th scope="col">Keterangan</th>
-                            <th scope="col">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="jalan in paginatedData" :key="jalan.id">
-                            <td>{{ nomor + 1 }}</td>
-                            <td>{{ getNamaDesa(jalan.desa_id) }}</td>
-                            <td>{{ jalan.nama_ruas }}</td>
-                            <td>{{ Math.floor(jalan.panjang) }} M</td>
-                            <td>{{ jalan.lebar }} M</td>
-                            <td>{{ getNamaEksisting(jalan.eksisting_id) }}</td>
-                            <td>{{ getNamaKondisi(jalan.kondisi_id) }}</td>
-                            <td>{{ getNamaJenisJalan(jalan.jenisjalan_id) }}</td>
-                            <td>{{ jalan.keterangan }}</td>
-                            <td class="dp-in-grid">
-                                <button class="btn btn-warning mt-2 shadow" @click="editRuasJalan(jalan.id)"><i
-                                        class="bi bi-pencil-fill"></i></button>
-                                <button class="btn btn-danger mt-2 shadow" @click="deleteRuasJalan(jalan.id)"> <i
-                                        class="bi bi-trash-fill"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="pagination justify-content-center">
-                    <button class="shadow-2" @click="prevPage" :disabled="currentPage === 1">Previous</button>
-                    <span class="text-dark">Page {{ currentPage }} of {{ totalPages }}</span>
-                    <button class="shadow-2" @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+            <div class="col-md-3">
+                <div class="card shadow mx-2">
+                    <div class="card-body">
+                        <form @submit.prevent="tambahJalan">
+                            <div class="mb-3">
+                                <label for="province" class="form-label">Pilih Provinsi:</label>
+                                <select id="province" class="form-select shadow-2" v-model="selectedProvince"
+                                    @change="onProvinceChange">
+                                    <option v-for="province in provinces" :key="province.id" :value="province.id">
+                                        {{ province.provinsi }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div v-if="kabupatens.length" class="mb-3">
+                                <label for="kabupaten" class="form-label">Pilih Kabupaten:</label>
+                                <select id="kabupaten" class="form-select shadow-2" v-model="selectedKabupaten"
+                                    @change="onKabupatenChange">
+                                    <option v-for="kabupaten in kabupatens" :key="kabupaten.id" :value="kabupaten.id">
+                                        {{ kabupaten.value }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div v-if="kecamatans.length" class="mb-3">
+                                <label for="kecamatan" class="form-label">Pilih Kecamatan:</label>
+                                <select id="kecamatan" class="form-select shadow-2" v-model="selectedKecamatan"
+                                    @change="onKecamatanChange">
+                                    <option v-for="kecamatan in kecamatans" :key="kecamatan.id" :value="kecamatan.id">
+                                        {{ kecamatan.value }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="dp-flex mb-2">
+                                <div class="form-group w-45 mr-1">
+                                    <label for="desa">Nama Desa:</label>
+                                    <select id="desa" class="form-select shadow-2" v-model="selectedDesa"
+                                        @change="onDesaChange">
+                                        <option v-for="desa in desas" :key="desa.id" :value="desa.id">
+                                            {{ desa.value }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group w-45">
+                                    <label for="nama_ruas">Nama Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.nama_ruas"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="dp-flex mb-2">
+                                <div class="form-group w-45 mr-1">
+                                    <label for="lebar">Lebar Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.lebar" required>
+                                </div>
+                                <div class="form-group w-45">
+                                    <label for="kode_ruas">Kode Ruas:</label>
+                                    <input type="text" class="form-control shadow-2" v-model="jalanForm.kode_ruas"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="eksisting">Eksisting:</label>
+                                <select id="eksisting" class="form-select shadow-2" v-model="selectedEksisting"
+                                    @change="onEksistingChange">
+                                    <option v-for="eksisting in eksistings" :key="eksisting.id" :value="eksisting.id">
+                                        {{ eksisting.eksisting }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="kondisi">Kondisi:</label>
+                                <select id="kondisi" class="form-select shadow-2" v-model="selectedKondisi"
+                                    @change="onKondisiChange">
+                                    <option v-for="kondisi in kondisis" :key="kondisi.id" :value="kondisi.id">
+                                        {{ kondisi.kondisi }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="jenis_jalan">Jenis Jalan:</label>
+                                <select id="jenis_jalan" class="form-select shadow-2" v-model="selectedJenisJalan"
+                                    @change="onJenisJalanChange">
+                                    <option v-for="jenis_jalan in jenisJalans" :key="jenis_jalan.id"
+                                        :value="jenis_jalan.id">
+                                        {{ jenis_jalan.jenisjalan }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="keterangan">Keterangan:</label>
+                                <input type="text" class="form-control shadow-2" v-model="jalanForm.keterangan"
+                                    required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4 shadow-2">Tambah Jalan</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,150 +152,104 @@
 
 <script>
 import axios from 'axios';
+import L from 'leaflet';
+import pako from 'pako';
+import 'leaflet-editable';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 export default {
     data() {
         return {
-            nomor: 1,
-            dataruasjalan: [],
+            jalanForm: {
+                desa_id: '',
+                kode_ruas: '',
+                nama_ruas: '',
+                panjang: '',
+                lebar: '',
+                eksisting_id: '',
+                kondisi_id: '',
+                jenisjalan_id: '',
+                keterangan: '',
+            },
             desas: [],
             eksistings: [],
             kondisis: [],
             jenisJalans: [],
-            currentPage: 1,
-            jumlahKondisiJalan: {},
-            jumlahJenisJalan: {},
-            pageSize: 10,
-            kondisiData: {},
-            searchQuery: '',
-            showJenisJalanData: false,
-            showKondisiJalanData: true,
-            showFilterDialog: false,
-            filterKondisi: '',
-            filterJenis: '',
-            filterDesa: '',
-            filterEksisting: '',
+            selectedDesa: null,
+            selectedEksisting: null,
+            selectedKondisi: null,
+            selectedJenisJalan: null,
+            polyline: null,
+            polylineCoords: [],
+            polylineString: '',
+            provinces: [],
+            kabupatens: [],
+            kecamatans: [],
+            selectedProvince: null,
+            selectedKabupaten: null,
+            selectedKecamatan: null,
+            desaCoordinates: {
+                "Jimbaran": [-8.7882083, 115.1525732], "Benoa": [-8.787573, 115.215521], "Cupel": [-8.3654449, 114.5512443],
+                "Ubung": [-8.630591, 115.1964555], "Sanur": [-8.6947883, 115.2492267], "Kesiman": [-8.6599448, 115.2487942],
+                "Tista": [-8.5426194, 115.0702486], "Babakan": [-8.3909595, 115.1284769], "Pecatu": [-8.8193125, 115.1096054],
+                "Ungasan": [-8.8238493, 115.155516], "Legian": [-8.703179, 115.170034], "Seminyak": [-8.6884617, 115.1607311],
+                "Kedonganan": [-8.7601338, 115.1734532], "Tuban": [-8.7418107, 115.1747874],
+                "Kuta": [-8.7251247, 115.1783948], "Besakih": [-8.3674573, 115.4491766], "Pesaban": [-8.4732323, 115.3933014],
+                "Pesabah": [-8.4732323, 115.3933014], "Ababi": [-8.4094819, 115.5701309], "Ababi": [-8.4094819, 115.5701309],
+                "Culik": [-8.3423049, 115.6031107], "Talibeng": [-8.5015434, 115.4267757], "Lokasari": [-8.5099149, 115.4192988],
+                "Lokasari": [-8.5099149, 115.4192988], "Kesiman": [-8.6599448, 115.2487942], "Kesiman Pentilan": [-8.6599448, 115.2487942],
+                "Dangin Puri Kelod": [-8.6599448, 115.2491014],
+                // Tambahkan koordinat desa 
+            }, kecematanCoordinates: {
+                "MENGWI": [-8.5607121, 115.1446241], "KUTA UTARA": [-8.6454091, 115.159901], "ABIANSEMAL": [-8.5272669, 115.2151078],
+                "PETANG": [-8.3500797, 115.2252437], "KUTA": [-8.7242124, 115.1815534], "KUTA SELATAN": [-8.7806564, 115.1886018],
+                "DENPASAR SELATAN": [-8.6888763, 115.2231738], "DENPASAR UTARA": [-8.623538, 115.2057948], "DENPASAR TIMUR": [-8.6304535, 115.2471368],
+                "DENPASAR BARAT": [-8.6590235, 115.1898615], "KERAMBITAN": [-8.5230725, 115.0846588], "PENEBEL": [-8.4278098, 115.1467919],
+                "SELEMADEG": [-8.4908353, 115.0491421], "BATURITI": [-8.3401193, 115.1504053], "KEDIRI": [-8.571807, 115.1188969],
+                "PUPUAN": [-8.3541709, 114.9957841], "MARGA": [-8.4429303, 115.1794938], "NEGARA": [-8.298738, 114.5979531],
+                "JEMBRANA": [-8.3012707, 114.6673136], "MENDOYO": [-8.2996525, 114.7390452], "PEKUTATAN": [-8.3873785, 114.8566339],
+                "MELAYA": [-8.2274723, 114.5344651], "GEROKGAK": [-8.1882967, 114.7639236], "SUKASADA": [-8.2088404, 115.0909638],
+                "TEJAKULA": [-8.1317751, 115.3248397], "SERIRIT": [-8.249942, 114.8922708], "BULELENG": [-8.129198, 115.0836545],
+                "BUSUNG BIU": [-8.3012064, 114.9320468], "SAWAN": [-8.151514, 115.1642467], "KUBUTAMBAHAN": [-8.1574336, 115.21734],
+                "TAMPAKSIRING": [-8.45527, 115.307778], "UBUD": [-8.5123037, 115.2512905], "BLAHBATUH": [-8.5653966, 115.3044604],
+                "GIANYAR": [-8.5197936, 115.3269249], "PAYANGAN": [-8.4026552, 115.2332244], "BANJAR": [-8.2188753, 115.0095564],
+                "SUKAWATI": [-8.5823404, 115.2585505], "TEGALLALANG": [-8.3981217, 115.2710165], "SUSUT": [-8.4226661, 115.330208],
+                "BANGLI": [-8.4130735, 115.348215], "TEMBUKU": [-8.414887, 115.376498], "KINTAMANI": [-8.2401583, 115.3239536],
+                "TABANAN": [-8.5229527, 115.0921335], "SELEMADEG TIMUR": [-8.4847379, 115.041563], "SELEMADEG BARAT": [-8.4544564, 114.9445345],
+                "NUSA PENIDA": [-8.7421655, 115.4810546], "BANJARANGKAN": [-8.514859, 115.3520453], "KLUNGKUNG": [-8.5253094, 115.3964945],
+                "DAWAN": [-8.5376968, 115.4196395], "RENDANG": [-8.3775125, 115.3817173], "ABANG": [-8.3775125, 115.3817173],
+                "SIDEMEN": [-8.3775125, 115.3817173], "BEBANDEM": [-8.3775125, 115.3817173], "MANGGIS": [-8.3775125, 115.3817173],
+                "SELAT": [-8.3775125, 115.3817173], "KARANGASEM": [-8.3775125, 115.3817173], "KUBU": [-8.3775125, 115.3817173],
+            },
         }
     },
-    computed: {
-        filteredData() {
-            let filtered = this.dataruasjalan;
 
-            if (this.searchQuery) {
-                const query = this.searchQuery.toLowerCase();
-                filtered = filtered.filter(jalan => {
-                    const namaRuas = jalan.nama_ruas.toLowerCase();
-                    const eksisting = this.getNamaEksisting(jalan.eksisting_id).toLowerCase();
-                    const kondisi = this.getNamaKondisi(jalan.kondisi_id).toLowerCase();
-                    const jenisJalan = this.getNamaJenisJalan(jalan.jenisjalan_id).toLowerCase();
-                    const namaDesa = this.getNamaDesa(jalan.desa_id).toLowerCase();
+    mounted() {
+        // Inisialisasi peta Leaflet
+        this.map = L.map('map').setView([-8.4253951, 115.1832866], 10);
 
-                    return (
-                        namaRuas.includes(query) ||
-                        eksisting.includes(query) ||
-                        kondisi.includes(query) ||
-                        jenisJalan.includes(query) ||
-                        namaDesa.includes(query)
-                    );
-                });
-            }
+        // Menambahkan layer peta OpenStreetMap
+        this.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(this.map);
 
-            if (this.filterKondisi) {
-                filtered = filtered.filter(jalan => this.getNamaKondisi(jalan.kondisi_id) === this.filterKondisi);
-            }
+        // Menangani event klik pada peta untuk menggambar polyline
+        this.map.on('click', this.onMapClick);
 
-            if (this.filterJenis) {
-                filtered = filtered.filter(jalan => this.getNamaJenisJalan(jalan.jenisjalan_id) === this.filterJenis);
-            }
-
-            if (this.filterDesa) {
-                filtered = filtered.filter(jalan => this.getNamaDesa(jalan.desa_id) === this.filterDesa);
-            }
-
-            if (this.filterEksisting) {
-                filtered = filtered.filter(jalan => this.getNamaEksisting(jalan.eksisting_id) === this.filterEksisting);
-            }
-
-            return filtered;
-        },
-        paginatedData() {
-            const start = (this.currentPage - 1) * this.pageSize;
-            const end = start + this.pageSize;
-            return this.filteredData.slice(start, end);
-        },
-        totalPages() {
-            return Math.ceil(this.filteredData.length / this.pageSize);
-        }
+        this.fetchJalanData();
+        this.enableEditMode();
     },
+
     created() {
-        this.fetchDataJalan();
-        this.fetchDesas();
         this.fetchEksistings();
         this.fetchKondisis();
         this.fetchJenisJalans();
+        this.fetchProvinces();
     },
+
     methods: {
-        toggleFilterDialog() {
-            this.showFilterDialog = !this.showFilterDialog;
-        },
-        applyFilter() {
-            this.currentPage = 1; // Reset to the first page
-            this.showFilterDialog = false;
-        },
-        resetFilter() {
-            this.filterKondisi = '';
-            this.filterJenis = '';
-            this.filterDesa = '';
-            this.filterEksisting = '';
-            this.searchQuery = '';
-            this.currentPage = 1;
-        },
-        showJenisJalan() {
-            this.showJenisJalanData = true;
-            this.showKondisiJalanData = false;
-        },
-        showKondisiJalan() {
-            this.showJenisJalanData = false;
-            this.showKondisiJalanData = true;
-        },
-        async fetchDataJalan() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('https://gisapis.manpits.xyz/api/ruasjalan', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                const dataruasjalan = response.data.ruasjalan;
-
-
-                if (Array.isArray(dataruasjalan)) {
-                    this.dataruasjalan = dataruasjalan;
-                    // Hitung jumlah kondisi jalan
-                    this.jumlahKondisiJalan = this.countKondisiJalan();
-                    this.jumlahJenisJalan = this.countJenisJalan();
-
-                } else {
-                    console.error('Format data tidak valid:', dataruasjalan);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        },
-        async fetchDesas() {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                this.desas = response.data.desa;
-            } catch (error) {
-                console.error(error);
-            }
-        },
         async fetchEksistings() {
             try {
                 const token = localStorage.getItem('token');
@@ -347,6 +263,12 @@ export default {
                 console.error(error);
             }
         },
+        enableEditMode() {
+            // Aktifkan mode edit pada polyline
+            if (this.polyline) {
+                this.polyline.enableEdit();
+            }
+        },
         async fetchKondisis() {
             try {
                 const token = localStorage.getItem('token');
@@ -356,10 +278,6 @@ export default {
                     }
                 });
                 this.kondisis = response.data.eksisting;
-
-                this.kondisis.forEach(item => {
-                    this.kondisiData[item.id] = item.kondisi;
-                });
             } catch (error) {
                 console.error(error);
             }
@@ -377,106 +295,281 @@ export default {
                 console.error(error);
             }
         },
-        getNamaDesa(id) {
-            const desa = this.desas.find(d => d.id === id);
-            return desa ? desa.desa : 'Tidak ditemukan';
-        },
-        getNamaEksisting(id) {
-            const eksisting = this.eksistings.find(e => e.id === id);
-            return eksisting ? eksisting.eksisting : 'Tidak ditemukan';
-        },
-        getNamaKondisi(id) {
-            const kondisi = this.kondisis.find(k => k.id === id);
-            return kondisi ? kondisi.kondisi : 'Tidak ditemukan';
-        },
-        getNamaJenisJalan(id) {
-            const jenisJalan = this.jenisJalans.find(j => j.id === id);
-            return jenisJalan ? jenisJalan.jenisjalan : 'Tidak ditemukan';
-        },
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
+        setMapViewForDesa() {
+            const selectedDesaName = this.desas.find(desa => desa.id === this.selectedDesa).value;
+
+            if (selectedDesaName in this.desaCoordinates) {
+                const coords = this.desaCoordinates[selectedDesaName];
+                this.map.setView(coords, 16); // Atur zoom level sesuai kebutuhan
+            } else {
+                console.error('Koordinat untuk desa ini tidak tersedia.');
             }
         },
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
+        setMapViewForKecematan() {
+            const kecamatan = this.kecamatans.find(d => d.id === this.selectedKecamatan);
+            if (kecamatan && this.kecematanCoordinates[kecamatan.value]) {
+                const [lat, lng] = this.kecematanCoordinates[kecamatan.value];
+                this.map.setView([lat, lng], 13);
             }
         },
-        editRuasJalan(id) {
-            localStorage.setItem('id', id);
-            this.$router.push({ name: 'EditRuasJalan', params: { id } });
+        onDesaChange() {
+            this.setMapViewForDesa();
         },
-        async deleteRuasJalan(id) {
-            Swal.fire({
-                title: "Apakah Anda yakin?",
-                text: "Anda tidak akan dapat mengembalikannya!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Ya, hapus saja!"
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const token = localStorage.getItem('token');
-                        await axios.delete(`https://gisapis.manpits.xyz/api/ruasjalan/${id}`, {
-                            headers: {
-                                Authorization: `Bearer ${token}`
-                            }
-                        });
-                        this.fetchDataJalan();
-                        Swal.fire({
-                            title: "Terhapus!",
-                            text: "Data jalan telah dihapus.",
-                            icon: "success"
-                        });
-                    } catch (error) {
-                        console.error(error);
-                        Swal.fire({
-                            title: "Error!",
-                            text: "Terjadi kesalahan saat menghapus data.",
-                            icon: "error"
-                        });
+        onEksistingChange() {
+            this.fetchEksistings();
+        },
+        onKondisiChange() {
+            this.fetchKondisis();
+        },
+        onJenisJalanChange() {
+            this.fetchJenisJalans();
+        },
+        onMapClick(e) {
+            // Tambahkan titik klik ke polylineCoords
+            this.polylineCoords.push(e.latlng);
+
+            // Jika polyline sudah ada, hapus polyline tersebut
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
+
+            // Gambar polyline baru
+            this.polyline = L.polyline(this.polylineCoords, { color: 'red' }).addTo(this.map);
+
+            // Hitung panjang polyline
+            this.jalanForm.panjang = this.calculatePolylineLength(this.polylineCoords);
+
+            // Konversi polyline menjadi string
+            this.polylineString = JSON.stringify(this.polylineCoords);
+
+        },
+        calculatePolylineLength(coords) {
+            let length = 0;
+            for (let i = 0; i < coords.length - 1; i++) {
+                length += coords[i].distanceTo(coords[i + 1]);
+            }
+            return length.toFixed(2); // Panjang dalam meter dengan 2 angka desimal
+        },
+        async tambahJalan() {
+            // Logika untuk menambah jalan ke database
+            try {
+                // Kompresi koordinat sebelum dikirim ke server
+                const compressedPolyline = this.compressCoordinate(this.polylineString);
+
+                const token = localStorage.getItem('token');
+                const response = await axios.post('https://gisapis.manpits.xyz/api/ruasjalan', {
+                    desa_id: this.selectedDesa,
+                    nama_ruas: this.jalanForm.nama_ruas,
+                    lebar: this.jalanForm.lebar,
+                    kode_ruas: this.jalanForm.kode_ruas,
+                    eksisting_id: this.selectedEksisting,
+                    kondisi_id: this.selectedKondisi,
+                    jenisjalan_id: this.selectedJenisJalan,
+                    keterangan: this.jalanForm.keterangan,
+                    panjang: this.jalanForm.panjang,
+                    paths: compressedPolyline,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
                     }
+                });
+                console.log(response.data);
+                Swal.fire({
+                    text: "Jalan berhasil ditambahkan",
+                    icon: "success"
+                });
+                // alert('Jalan berhasil ditambahkan');
+
+                this.fetchJalanData();
+                this.jalanForm.nama_ruas = '';
+                this.jalanForm.lebar = '';
+                this.jalanForm.kode_ruas = '';
+                this.jalanForm.keterangan = '';
+                this.selectedEksisting = null;
+                this.selectedKondisi = null;
+                this.selectedJenisJalan = null;
+                this.polylineCoords = [];
+                if (this.polyline) {
+                    this.map.removeLayer(this.polyline);
                 }
-            });
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    text: "Gagal menambahkan jalan",
+                    icon: "error"
+                });
+                // alert('Gagal menambahkan jalan');
+            }
         },
-        countKondisiJalan() {
-            const jumlahKondisiJalan = {
-                Rusak: 0,
-                Bagus: 0,
-                Sedang: 0
-            };
+        async fetchJalanData() {
+            try {
+                // Panggil API untuk mendapatkan data jalan
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/ruasjalan', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const jalanData = response.data.ruasjalan;
 
-            this.dataruasjalan.forEach(jalan => {
-                const kondisi = this.kondisiData[jalan.kondisi_id] || 'Unknown';
-                console.log(kondisi);
-                if (kondisi === 'Rusak') jumlahKondisiJalan.Rusak++;
-                else if (kondisi === 'Baik') jumlahKondisiJalan.Bagus++;
-                else if (kondisi === 'Sedang') jumlahKondisiJalan.Sedang++;
-            });
+                // Pastikan data yang diterima adalah array
+                if (Array.isArray(jalanData)) {
+                    // Loop melalui data jalan
+                    jalanData.forEach(jalan => {
+                        try {
+                            // Dekompresi koordinat sebelum menambahkan polyline ke peta
+                            const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
-            return jumlahKondisiJalan;
+                            // Gambar polyline berdasarkan koordinat yang sudah didekompresi
+                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
+                            
+                            // Gambar label kode ruas di atas polyline
+                            const midPointIndex = Math.floor(JSON.parse(decompressedPolyline).length / 2);
+                            const midPoint = JSON.parse(decompressedPolyline)[midPointIndex];
+                            const labelMarker = L.marker(midPoint, {
+                                icon: L.divIcon({
+                                    className: 'label-icon',
+                                    html: `<span class="label-text">${jalan.kode_ruas}</span>`,
+                                    iconSize: [100, 40] // Sesuaikan ukuran ikon label
+                                })
+                            }).addTo(this.map);
+
+                            polyline.on('click', () => {
+                                polyline.bindPopup(`
+                                    <button class="btn mt-1 btn-warning shadow-2" onclick="saveAndEdit('${jalan.id}')"><i class="bi bi-pencil-fill"></i>Edit</button>
+                                `, {
+                                    maxWidth: 400,
+                                    minWidth: 300
+                                }).openPopup();
+
+                            });
+                        } catch (error) {
+                            console.error('Error parsing coordinate data:', error);
+                        }
+                    });
+                } else {
+                    console.error('Invalid data format:', jalanData);
+                }
+            } catch (error) {
+                console.error(error);
+            }
         },
-        countJenisJalan() {
-            const jumlahJenisJalan = {
-                Desa: 0,
-                Kabupaten: 0,
-                Provinsi: 0
-            };
+        compressCoordinate(coordinateString) {
+            // Konversi koordinat string menjadi Uint8Array
+            const uint8Array = new TextEncoder().encode(coordinateString);
 
-            this.dataruasjalan.forEach(jalan => {
-                const jenisJalan = this.jenisJalans.find(j => j.id === jalan.jenisjalan_id);
-                const jenis = jenisJalan ? jenisJalan.jenisjalan : 'Unknown';
+            // Kompresi koordinat menggunakan pako
+            const compressed = pako.deflate(uint8Array);
 
-                if (jenis === 'Desa') jumlahJenisJalan.Desa++;
-                else if (jenis === 'Kabupaten') jumlahJenisJalan.Kabupaten++;
-                else if (jenis === 'Provinsi') jumlahJenisJalan.Provinsi++;
-            });
-
-            return jumlahJenisJalan;
+            // Konversi hasil kompresi menjadi base64 string
+            return btoa(String.fromCharCode(...new Uint8Array(compressed)));
         },
+        decompressCoordinate(compressedCoordinate) {
+            // Konversi base64 string kembali ke Uint8Array
+            const compressed = Uint8Array.from(atob(compressedCoordinate), c => c.charCodeAt(0));
+
+            // Dekompresi koordinat menggunakan pako
+            const decompressed = pako.inflate(compressed, { to: 'string' });
+
+            return decompressed;
+        },
+        async fetchProvinces() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('https://gisapis.manpits.xyz/api/mregion', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.provinces = response.data.provinsi;
+                // this.kabupatens = response.data.kabupaten;
+                // this.kecamatans = response.data.kecamatan;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchKabupaten() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kabupaten/${this.selectedProvince}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.kabupatens = response.data.kabupaten;
+                this.kecamatans = [];
+                this.desas = [];
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchKecamatan() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/kecamatan/${this.selectedKabupaten}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.kecamatans = response.data.kecamatan;
+                this.desas = [];
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        async fetchDesa() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(`https://gisapis.manpits.xyz/api/desa/${this.selectedKecamatan}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                this.desas = response.data.desa;
+            } catch (error) {
+                console.error(error);
+            }
+        },
+        onProvinceChange() {
+            this.fetchKabupaten();
+        },
+        onKabupatenChange() {
+            this.fetchKecamatan();
+        },
+        onKecamatanChange() {
+            this.fetchDesa();
+            this.setMapViewForKecematan();
+        },
+        undoLastPoint() {
+            // Hapus titik terakhir dari polylineCoords
+            this.polylineCoords.pop();
+
+            // Hapus polyline yang ada jika ada
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
+
+            // Gambar polyline baru jika masih ada koordinat
+            if (this.polylineCoords.length > 0) {
+                this.polyline = L.polyline(this.polylineCoords, { color: 'red' }).addTo(this.map);
+            }
+
+            // Hitung ulang panjang polyline
+            this.jalanForm.panjang = this.calculatePolylineLength(this.polylineCoords);
+
+            // Konversi polyline menjadi string
+            this.polylineString = JSON.stringify(this.polylineCoords);
+        },
+        deleteLastPoint() {
+            this.polylineCoords = [];
+            if (this.polyline) {
+                this.map.removeLayer(this.polyline);
+            }
+        }
     }
 }
 </script>
+
+<style>
+/* Tambahkan gaya kustom Anda di sini */
+</style>

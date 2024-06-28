@@ -7,7 +7,8 @@
             <div class="glass-effect p-4 rounded shadow-lg w-50 dp-flex">
                 <div class="w-50">
                     <h2 class="text-white tx-shadow">Road Tracking - Bali</h2>
-                    <span class="text-white tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalu dengan Road Tracking</span>
+                    <span class="text-white tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalu dengan
+                        Road Tracking</span>
                     <div class="line mt-2 shadow-2"></div>
                     <h2 class="mb-2 mt-4 fs-4 text-dark">Login</h2>
                     <form @submit.prevent="login">
@@ -20,7 +21,7 @@
                             <input v-model="password" type="password" id="password" class="form-control shadow-2"
                                 required />
                         </div>
-                        <button type="submit" class="btn btn-info w-100 text-white shadow-2">Login</button>
+                        <button type="submit" class="hvr-green btn-2 btn-info w-100 text-white shadow-2">Login</button>
                         <div class="text-center">
                             <p class="text-white pt-2">Don't have an account? <router-link to="/register"
                                     class="btn-link text-white">Register</router-link></p>
@@ -37,9 +38,9 @@
 
 <script>
 import axios from 'axios';
-// import Swal from 'sweetalert2';
 import WaitingPage from './WaitingPage.vue';
 import jalan from '@/assets/jalan.jpg';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default {
     components: {

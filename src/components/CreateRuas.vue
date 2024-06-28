@@ -22,7 +22,8 @@
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2"><a href="/"
-                            class="d-flex text-white align-items-center">Logout</a></button>
+                            class="d-flex text-white align-items-center"><i
+                                class="bi bi-box-arrow-right mx-1"></i>Logout</a></button>
                 </div>
                 <a class="navbar-brand" href="#">
                     <img src="https://www.baliprov.go.id/assets/img/nav_bar.png" alt="Logo" width="30" height="30"
@@ -35,11 +36,14 @@
         <div class="d-flex background p-2" style="height: 100vh; width: 100vw;">
             <div class=" card shadow mx-2" style="width: 100%;">
                 <div class="row justify-content-center">
-                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2">Edit
+                    <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-pencil-fill mx-2"></i>Edit
                         Polyline</button>
-                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2">Undo
+                    <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-arrow-counterclockwise mx-2"></i>Undo
                         Koordinat</button>
-                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2">Delete
+                    <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2"><i
+                            class="bi bi-trash-fill mx-2"></i>Delete
                         Koordinat</button>
                 </div>
                 <div class="card-body">
@@ -151,6 +155,8 @@ import axios from 'axios';
 import L from 'leaflet';
 import pako from 'pako';
 import 'leaflet-editable';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 export default {
     data() {
@@ -216,6 +222,11 @@ export default {
                 "SIDEMEN": [-8.3775125, 115.3817173], "BEBANDEM": [-8.3775125, 115.3817173], "MANGGIS": [-8.3775125, 115.3817173],
                 "SELAT": [-8.3775125, 115.3817173], "KARANGASEM": [-8.3775125, 115.3817173], "KUBU": [-8.3775125, 115.3817173],
             },
+            kabupatenCoordinates: {
+                "Jembrana": [-8.3647542, 114.5667299], "Tabanan": [-8.4082848, 115.0193258], "Badung": [-8.5371681, 115.0506975],
+                "Denpasar": [-8.6633288, 115.1981492], "Buleleng": [-8.2131465, 114.7912249], "Klungkung": [-8.6271477, 115.4096299],
+                "Gianyar": [-8.4680218, 115.2189621], "Bangli": [-8.3387217, 115.2969328], "Karangasem": [-8.3729366, 115.4719545],
+            }
         }
     },
 
@@ -415,7 +426,44 @@ export default {
                             const decompressedPolyline = this.decompressCoordinate(jalan.paths);
 
                             // Gambar polyline berdasarkan koordinat yang sudah didekompresi
-                            L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
+                            const polyline = L.polyline(JSON.parse(decompressedPolyline), { color: 'darkblue' }).addTo(this.map);
+
+                            // Gambar label kode ruas di atas polyline
+                            const midPointIndex = Math.floor(JSON.parse(decompressedPolyline).length / 2);
+                            const midPoint = JSON.parse(decompressedPolyline)[midPointIndex];
+
+                            const minZoomToShowLabel = 12;
+                            const maxZoomToShowLabel = 19;
+
+                            // Gunakan event pada peta untuk mengatur visibilitas marker berdasarkan zoom level
+                            this.map.on('zoomend', () => {
+                                const currentZoom = this.map.getZoom();
+
+                                if (currentZoom >= minZoomToShowLabel && currentZoom <= maxZoomToShowLabel) {
+                                    const labelMarker =  L.marker(midPoint, {
+                                        icon: L.divIcon({
+                                            className: 'label-icon',
+                                            html: `<span class="label-text">${jalan.kode_ruas}</span>`,
+                                            iconSize: [100, 40]
+                                        })
+                                    }).addTo(this.map);
+                                } else {
+                                    // Hapus marker jika zoom tidak berada dalam rentang yang ditentukan
+                                    if (this.map.hasLayer(labelMarker)) {
+                                        this.map.removeLayer(labelMarker);
+                                    }
+                                }
+                            });
+
+                            polyline.on('click', () => {
+                                polyline.bindPopup(`
+                                    <button class="btn mt-1 btn-warning shadow-2" onclick="saveAndEdit('${jalan.id}')"><i class="bi bi-pencil-fill"></i>Edit</button>
+                                `, {
+                                    maxWidth: 400,
+                                    minWidth: 300
+                                }).openPopup();
+
+                            });
                         } catch (error) {
                             console.error('Error parsing coordinate data:', error);
                         }
@@ -508,6 +556,7 @@ export default {
         },
         onKabupatenChange() {
             this.fetchKecamatan();
+            this.setMapViewForKabupaten();
         },
         onKecamatanChange() {
             this.fetchDesa();
@@ -533,12 +582,19 @@ export default {
             // Konversi polyline menjadi string
             this.polylineString = JSON.stringify(this.polylineCoords);
         },
-        deleteLastPoint(){
+        deleteLastPoint() {
             this.polylineCoords = [];
             if (this.polyline) {
                 this.map.removeLayer(this.polyline);
             }
-        }
+        },
+        setMapViewForKabupaten() {
+            const kabupaten = this.kabupatens.find(d => d.id === this.selectedKabupaten);
+            if (kabupaten && this.kabupatenCoordinates[kabupaten.value]) {
+                const [lat, lng] = this.kabupatenCoordinates[kabupaten.value];
+                this.map.setView([lat, lng], 12);
+            }
+        },
     }
 }
 </script>
