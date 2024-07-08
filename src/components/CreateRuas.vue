@@ -9,16 +9,16 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/homelogin">Home</a>
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Tambah Ruas Jalan</a>
+                            <a class="nav-link" href="/create">Laporkan Jalan Rusak</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/data">Data Jalan</a>
+                            <a class="nav-link" href="/data">Data Laporan Jalan Rusak</a>
                         </li>
                     </ul>
                     <!-- <button class="btn btn-danger m-2 shadow-2" @click="logout()"><i
@@ -37,19 +37,23 @@
                 <div class="row justify-content-center">
                     <button @click="enableEditMode" class="btn btn-success mt-2 w-25 mx-2 shadow-2"><i
                             class="bi bi-pencil-fill mx-2"></i>Edit
-                        Polyline</button>
+                        Titik Jalan</button>
                     <button @click="undoLastPoint" class="btn btn-warning mt-2 w-25 mx-2 shadow-2"><i
                             class="bi bi-arrow-counterclockwise mx-2"></i>Undo
-                        Koordinat</button>
+                        Titik Jalan</button>
                     <button @click="deleteLastPoint" class="btn btn-danger mt-2 w-25 mx-2 shadow-2"><i
-                            class="bi bi-trash-fill mx-2"></i>Delete
-                        Koordinat</button>
+                            class="bi bi-trash-fill mx-2"></i>Hapus
+                        Titik Jalan</button>
                 </div>
                 <div class="card-body">
                     <div id="map" ref="map" style="height: 100%; width: 100%;"></div>
                 </div>
             </div>
             <div class="col-md-3">
+                <div class="card shadow bg-warning mx-2 mb-3 p-3">
+                    <h5 class="text-dark">NOTE!!</h5>
+                    <P>Lakukan aksi klik pada maps untuk membuat garis jalan rusak </P>
+                </div>
                 <div class="card shadow mx-2">
                     <div class="card-body">
                         <form @submit.prevent="tambahJalan">

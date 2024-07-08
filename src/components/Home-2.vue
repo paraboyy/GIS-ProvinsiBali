@@ -7,7 +7,7 @@
             <div class="glass-effect p-4 rounded shadow-lg w-50 dp-flex">
                 <div class="w-50">
                     <h2 class="text-white tx-shadow">Road Tracking - Bali</h2>
-                    <span class="text-white tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalu dengan
+                    <span class="text-dark tx-shadow">Jelajahi Bali dan laporkan kondisi jalan yang anda lalui dengan
                         Road Tracking</span>
                     <div class="line mt-2 shadow-2"></div>
                     <h2 class="mb-2 mt-4 fs-4 text-dark">Login</h2>

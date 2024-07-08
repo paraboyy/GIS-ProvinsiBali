@@ -12,13 +12,13 @@
                             <a class="nav-link" aria-current="page" href="/homelogin">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">Tambah Ruas Jalan</a>
+                            <a class="nav-link active" href="#">Laporkan Ruas Jalan</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/data">Data Jalan</a>
+                            <a class="nav-link" href="/data">Data Laporan Jalan</a>
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2" @click="logout()"><i

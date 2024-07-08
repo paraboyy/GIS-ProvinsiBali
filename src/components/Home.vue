@@ -12,13 +12,13 @@
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/create">Tambah Ruas Jalan</a>
+                            <a class="nav-link" href="/create">Laporkan Jalan Rusak</a>
                         </li>
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="/road">Detail Jalan</a>
                         </li> -->
                         <li class="nav-item">
-                            <a class="nav-link" href="/data">Data Jalan</a>
+                            <a class="nav-link" href="/data">Data Laporan Jalan Rusak</a>
                         </li>
                     </ul>
                     <button class="btn btn-danger m-2 shadow-2"><a href="/"
